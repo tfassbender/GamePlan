@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>GamePlan</title>
+
+    <link rel="icon" type="image/png" href="icons/logo_small.png"/>
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/> -->
+</head>
+<body>
+<h1>GamePlan</h1>
+<div id="welcome-text">Loading welcome message...</div>
+<script>
+    fetch('/game-plan/home/welcome')
+      .then(response => response.text())
+      .then(text => {
+        document.getElementById('welcome-text').textContent = text;
+      })
+      .catch(() => {
+        document.getElementById('welcome-text').textContent = 'Failed to load welcome message.';
+      });
+</script>
+</body>
+</html>
