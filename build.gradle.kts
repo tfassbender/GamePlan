@@ -12,7 +12,8 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
     implementation("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0")
-    implementation("com.vladsch.flexmark:flexmark-all:0.64.0") // markdown to html transformation
+    implementation("org.slf4j:slf4j-api:2.0.12")
+    implementation("org.slf4j:slf4j-simple:2.0.12")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
 }
