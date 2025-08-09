@@ -5,6 +5,6 @@ import java.util.List;
 
 public class UserDto {
 
-    public String name;
-    public List<PlanDto> plans = new ArrayList<>();
+  public String name;
+  public List<PlanDto> plans = new ArrayList<>();
 }

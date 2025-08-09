@@ -1,7 +1,9 @@
 package net.tfassbender.gameplan.persistence;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
+import net.tfassbender.gameplan.persistence.exception.GamePlanPersistenceException;
+import net.tfassbender.gameplan.persistence.exception.GamePlanResourceAlreadyExistingException;
+import net.tfassbender.gameplan.persistence.exception.GamePlanResourceNotFoundException;
 import net.tfassbender.gameplan.util.FileUtil;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
@@ -17,36 +19,36 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 public class UserService {
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    public static final String USERS_SUB_DIR = "users";
+  private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    private static final String USER_CONFIG_FILE = ".user_config.json";
+  public static final String USERS_SUB_DIR = "users";
 
-    @ConfigProperty(name = "game_plan.path")
-    private String gamePlanPath;
+  @ConfigProperty(name = "game_plan.path")
+  private String gamePlanPath;
 
-    public List<String> getUsers() {
-        Path usersDir = Paths.get(gamePlanPath, USERS_SUB_DIR);
-        if (!Files.exists(usersDir)) {
-            FileUtil.createDirectory(usersDir);
-            return List.of();
-        }
-
-        try (Stream<Path> stream = Files.list(usersDir)) {
-            return stream.filter(Files::isDirectory) //
-                    .map(path -> path.getFileName().toString()) //
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            log.error("Failed to list users directory: {}", usersDir, e);
-            return List.of();
-        }
+  public List<String> getUsers() throws GamePlanPersistenceException {
+    Path usersDir = Paths.get(gamePlanPath, USERS_SUB_DIR);
+    if (!Files.exists(usersDir)) {
+      throw new GamePlanResourceNotFoundException("The users directory does not exist: " + usersDir);
     }
 
-    public void createUser(String name) {
-        Path userDir = Paths.get(gamePlanPath, USERS_SUB_DIR, name);
-        if (!Files.exists(userDir)) {
-            FileUtil.createDirectory(userDir);
-        }
+    try (Stream<Path> stream = Files.list(usersDir)) {
+      return stream.filter(Files::isDirectory) //
+              .map(path -> path.getFileName().toString()) //
+              .collect(Collectors.toList());
     }
+    catch (IOException e) {
+      throw new GamePlanPersistenceException("Failed to list users in directory: " + usersDir, e);
+    }
+  }
+
+  public void createUser(String name) throws GamePlanPersistenceException {
+    Path userDir = Paths.get(gamePlanPath, USERS_SUB_DIR, name);
+    if (Files.exists(userDir)) {
+      throw new GamePlanResourceAlreadyExistingException("User '" + name + "' already exists.");
+    }
+
+    FileUtil.createDirectory(userDir);
+  }
 }

@@ -5,8 +5,8 @@ import java.util.List;
 
 public class PlanDto {
 
-    public String name;
-    public String description;
-    public String lastModified;
-    public List<PlanStageDto> stages = new ArrayList<>();
+  public String name;
+  public String description;
+  public String lastModified;
+  public List<PlanStageDto> stages = new ArrayList<>();
 }

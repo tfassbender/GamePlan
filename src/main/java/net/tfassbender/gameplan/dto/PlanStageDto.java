@@ -5,6 +5,6 @@ import java.util.Map;
 
 public class PlanStageDto {
 
-    public String description;
-    public Map<String, Integer> resourceChanges = new HashMap<>();
+  public String description;
+  public Map<String, Integer> resourceChanges = new HashMap<>();
 }
