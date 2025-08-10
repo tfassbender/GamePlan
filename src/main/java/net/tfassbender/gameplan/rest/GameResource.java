@@ -22,7 +22,18 @@ public class GameResource {
 
   @GET
   public Response getGames() {
-    List<String> gameNames = gameService.getGameNames();
+    List<String> gameNames;
+    try {
+      gameNames = gameService.getGameNames();
+    }
+    catch (GamePlanResourceNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND) //
+              .entity(new ErrorResponse("No game configurations found: " + e.getMessage())).build();
+    }
+    catch (GamePlanPersistenceException e) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR) //
+              .entity(new ErrorResponse("Failed to retrieve game configurations: " + e.getMessage())).build();
+    }
 
     if (gameNames.isEmpty()) {
       return Response.status(Response.Status.NOT_FOUND) //

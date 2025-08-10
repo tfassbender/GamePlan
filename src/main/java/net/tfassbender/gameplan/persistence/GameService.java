@@ -6,8 +6,6 @@ import net.tfassbender.gameplan.dto.GameDto;
 import net.tfassbender.gameplan.persistence.exception.GamePlanPersistenceException;
 import net.tfassbender.gameplan.persistence.exception.GamePlanResourceNotFoundException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,18 +17,15 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class GameService {
 
-  private static final Logger log = LoggerFactory.getLogger(GameService.class.getName());
-
   public static final String GAMES_SUB_DIR = "games";
 
   @ConfigProperty(name = "game_plan.path")
   private String gamePlanPath;
 
-  public List<String> getGameNames() {
+  public List<String> getGameNames() throws GamePlanPersistenceException {
     Path gamesDir = Paths.get(gamePlanPath, GAMES_SUB_DIR);
     if (!Files.exists(gamesDir)) {
-      log.warn("Games directory does not exist: {}", gamesDir);
-      return List.of();
+      throw new GamePlanResourceNotFoundException("The games directory does not exist: " + gamesDir);
     }
 
     try (Stream<Path> files = Files.list(gamesDir)) {
@@ -40,8 +35,7 @@ public class GameService {
               .toList();
     }
     catch (IOException e) {
-      log.error("Error reading game files from directory: {}", gamesDir, e);
-      return List.of();
+      throw new GamePlanPersistenceException("Failed to list game files in directory: " + gamesDir, e);
     }
   }
 

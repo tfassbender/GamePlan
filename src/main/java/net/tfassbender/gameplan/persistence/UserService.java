@@ -6,8 +6,6 @@ import net.tfassbender.gameplan.persistence.exception.GamePlanResourceAlreadyExi
 import net.tfassbender.gameplan.persistence.exception.GamePlanResourceNotFoundException;
 import net.tfassbender.gameplan.util.FileUtil;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,9 +18,7 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class UserService {
 
-  private static final Logger log = LoggerFactory.getLogger(UserService.class);
-
-  public static final String USERS_SUB_DIR = "users";
+  public static final String USERS_SUB_DIR = ".users";
 
   @ConfigProperty(name = "game_plan.path")
   private String gamePlanPath;
