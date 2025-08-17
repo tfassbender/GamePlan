@@ -13,7 +13,7 @@ import net.tfassbender.gameplan.persistence.exception.GamePlanResourceNotFoundEx
 
 import java.util.List;
 
-@Path("/game-plan/{username}/plans")
+@Path("/{username}/plans")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PlanResource {

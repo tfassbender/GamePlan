@@ -9,7 +9,7 @@ import net.tfassbender.gameplan.persistence.UserService;
 import net.tfassbender.gameplan.persistence.exception.GamePlanPersistenceException;
 import net.tfassbender.gameplan.persistence.exception.GamePlanResourceAlreadyExistingException;
 
-@Path("/game-plan/users")
+@Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class UsersResource {

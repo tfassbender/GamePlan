@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.Response;
 /**
  * Simple REST endpoint for testing the home page.
  */
-@Path("/game-plan/home")
+@Path("/home")
 public class HomeResource {
 
   @GET

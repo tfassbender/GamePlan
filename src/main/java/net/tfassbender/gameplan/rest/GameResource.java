@@ -12,7 +12,7 @@ import net.tfassbender.gameplan.persistence.exception.GamePlanResourceNotFoundEx
 
 import java.util.List;
 
-@Path("/game-plan/games")
+@Path("/games")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GameResource {
@@ -35,11 +35,7 @@ public class GameResource {
               .entity(new ErrorResponse("Failed to retrieve game configurations: " + e.getMessage())).build();
     }
 
-    if (gameNames.isEmpty()) {
-      return Response.status(Response.Status.NOT_FOUND) //
-              .entity(new ErrorResponse("No game configurations found.")).build();
-    }
-
+    // Always return 200 OK with a JSON array, even if empty
     return Response.ok(gameNames).build();
   }
 

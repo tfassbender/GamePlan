@@ -96,7 +96,7 @@ public class PlanFileService implements PlanService {
   public List<String> getPlanNames(String username) throws GamePlanPersistenceException {
     Map<String, Path> plansToFiles = usersToPlansToFiles.get(username);
     if (plansToFiles == null) {
-      throw new GamePlanResourceNotFoundException("No plans found for user '" + username + "'.");
+      return List.of();
     }
 
     return plansToFiles.keySet().stream().toList();
