@@ -5,8 +5,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import net.tfassbender.gameplan.persistence.GameService;
-import net.tfassbender.gameplan.persistence.UserService;
 import net.tfassbender.gameplan.persistence.exception.GamePlanPersistenceException;
+import net.tfassbender.gameplan.persistence.file.GameFileService;
+import net.tfassbender.gameplan.persistence.file.UserFileService;
 import net.tfassbender.gameplan.util.FileUtil;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
@@ -38,9 +39,9 @@ public class GamePlanStartupInitializer {
     try {
       Path gamePlanDir = Path.of(gamePlanPath);
       FileUtil.createDirectoryIfNotExists(gamePlanDir);
-      Path gamesDir = gamePlanDir.resolve(GameService.GAMES_SUB_DIR);
+      Path gamesDir = gamePlanDir.resolve(GameFileService.GAMES_SUB_DIR);
       FileUtil.createDirectoryIfNotExists(gamesDir);
-      Path usersDir = gamePlanDir.resolve(UserService.USERS_SUB_DIR);
+      Path usersDir = gamePlanDir.resolve(UserFileService.USERS_SUB_DIR);
       FileUtil.createDirectoryIfNotExists(usersDir);
     }
     catch (GamePlanPersistenceException e) {
