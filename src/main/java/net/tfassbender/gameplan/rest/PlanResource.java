@@ -15,7 +15,6 @@ import java.util.List;
 
 @Path("/{username}/plans")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class PlanResource {
 
   @Inject
@@ -85,6 +84,7 @@ public class PlanResource {
   }
 
   @PUT
+  @Consumes(MediaType.APPLICATION_JSON)
   public Response updatePlan(@PathParam("username") String username, PlanDto planDto) {
     try {
       PlanDto updatedPlan = planService.savePlan(username, planDto);
