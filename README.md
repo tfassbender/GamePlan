@@ -8,7 +8,7 @@ changes over time.
 
 ## 🚧 Project Status
 
-GamePlan is currently in early development. This repository contains planning notes and a basic project structure.
+GamePlan is currently in development. The backend is functional. The frontend is in progress.
 
 ## ✨ Planned Features
 
