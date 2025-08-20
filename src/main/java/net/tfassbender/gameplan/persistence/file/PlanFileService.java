@@ -3,9 +3,10 @@ package net.tfassbender.gameplan.persistence.file;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import net.tfassbender.gameplan.dto.PlanDto;
+import net.tfassbender.gameplan.exception.GamePlanPersistenceException;
+import net.tfassbender.gameplan.exception.GamePlanResourceNotFoundException;
 import net.tfassbender.gameplan.persistence.PlanService;
-import net.tfassbender.gameplan.persistence.exception.GamePlanPersistenceException;
-import net.tfassbender.gameplan.persistence.exception.GamePlanResourceNotFoundException;
+import net.tfassbender.gameplan.util.FileUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
@@ -30,17 +31,14 @@ public class PlanFileService implements PlanService {
   private String gamePlanPath;
 
   public List<String> getPlanNames(String username) throws GamePlanPersistenceException {
-    if (username == null) {
-      throw new GamePlanResourceNotFoundException("Username cannot be null.");
-    }
+    FileUtil.checkResourceNameValid(username);
 
     return getAllPlansForUser(username).map(dto -> dto.name).toList();
   }
 
   public PlanDto getPlan(String username, String planName) throws GamePlanPersistenceException {
-    if (username == null || planName == null) {
-      throw new GamePlanResourceNotFoundException("Username or plan name cannot be null.");
-    }
+    FileUtil.checkResourceNameValid(username);
+    FileUtil.checkResourceNameValid(planName);
 
     return getAllPlansForUser(username).filter(dto -> planName.equals(dto.name)) //
             .findFirst() //
@@ -48,6 +46,9 @@ public class PlanFileService implements PlanService {
   }
 
   public PlanDto createPlan(String username, String gameName) throws GamePlanPersistenceException {
+    FileUtil.checkResourceNameValid(username);
+    FileUtil.checkResourceNameValid(gameName);
+
     Path planFilePath = createPlanFile(username, gameName);
 
     PlanDto newPlan = new PlanDto();
@@ -88,6 +89,12 @@ public class PlanFileService implements PlanService {
   }
 
   public PlanDto savePlan(String username, PlanDto plan) throws GamePlanPersistenceException {
+    FileUtil.checkResourceNameValid(username);
+    if (plan == null) {
+      throw new GamePlanPersistenceException("PlanDto cannot be null.");
+    }
+    FileUtil.checkResourceNameValid(plan.name);
+
     Path planFilePath = findPlanDtoAndPathByName(username, plan.name).getRight();
     ObjectMapper mapper = new ObjectMapper();
     try {
@@ -104,10 +111,9 @@ public class PlanFileService implements PlanService {
   }
 
   public void deletePlan(String username, String planName) throws GamePlanPersistenceException {
-    if (username == null || planName == null) {
-      throw new GamePlanResourceNotFoundException("Username or plan name cannot be null.");
-    }
-
+    FileUtil.checkResourceNameValid(username);
+    FileUtil.checkResourceNameValid(planName);
+    
     Pair<PlanDto, Path> plan = findPlanDtoAndPathByName(username, planName);
 
     try {

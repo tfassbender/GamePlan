@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,6 +73,23 @@ public class PlanResourceTest {
   }
 
   @Test
+  public void testGetPlans_invalidUserName() {
+    String invalidUserName = "../../../path/to/invalid/plan";
+    String encodedPlanName = URLEncoder.encode(invalidUserName, StandardCharsets.UTF_8);
+    var response = RestAssured.given() //
+            .header("Accept", "application/json") //
+            .when().get("/" + encodedPlanName + "/plans") //
+            .then().extract();
+    int statusCode = response.statusCode();
+    String body = response.body().asString();
+    // Expecting 400 Bad Request
+    assertThat(statusCode, is(400));
+    assertThat(body, containsString("Invalid user name"));
+    assertThat(body, containsString(invalidUserName));
+    assertThat(body, containsString("only alphanumeric characters or underscores"));
+  }
+
+  @Test
   public void testGetPlan_returnsPlanDto() throws Exception {
     String planName = "TestPlan2";
     Path planFile = USER_DIR.resolve(planName + ".json");
@@ -112,6 +131,23 @@ public class PlanResourceTest {
     finally {
       Files.deleteIfExists(planFile);
     }
+  }
+
+  @Test
+  public void testGetPlan_invalidPlanName() {
+    String invalidPlanName = "../../../path/to/invalid/plan";
+    String encodedPlanName = URLEncoder.encode(invalidPlanName, StandardCharsets.UTF_8);
+    var response = RestAssured.given() //
+            .header("Accept", "application/json") //
+            .when().get("/" + TEST_USER + "/plans/" + encodedPlanName) //
+            .then().extract();
+    int statusCode = response.statusCode();
+    String body = response.body().asString();
+    // Expecting 400 Bad Request
+    assertThat(statusCode, is(400));
+    assertThat(body, containsString("Invalid resource name"));
+    assertThat(body, containsString(invalidPlanName));
+    assertThat(body, containsString("only alphanumeric characters or underscores"));
   }
 
   @Test
@@ -181,6 +217,29 @@ public class PlanResourceTest {
   }
 
   @Test
+  public void testCreatePlan_invalidGameName() throws Exception {
+    String user = "TestUser4";
+    Path userDir = Paths.get("build/test-gameplan-data/.users/" + user);
+    Files.createDirectories(userDir);
+    String invalidGameName = "../../../path/to/invalid/game";
+    String encodedGameName = URLEncoder.encode(invalidGameName, StandardCharsets.UTF_8);
+    try {
+      var response = RestAssured.given() //
+              .header("Accept", "application/json") //
+              .when().post("/" + user + "/plans/" + encodedGameName) //
+              .then().extract();
+      assertThat(response.statusCode(), is(400));
+      String body = response.body().asString();
+      assertThat(body, containsString("Invalid resource name"));
+      assertThat(body, containsString(invalidGameName));
+      assertThat(body, containsString("only alphanumeric characters or underscores"));
+    }
+    finally {
+      deleteDirectoryRecursively(userDir);
+    }
+  }
+
+  @Test
   public void testClonePlan_userDoesNotExist() throws Exception {
     String user = "TestUserClone1";
     String originalPlanName = "NonExistentPlan";
@@ -213,6 +272,32 @@ public class PlanResourceTest {
       assertThat(response.statusCode(), is(404));
       String body = response.body().asString();
       assertThat(body, containsString("Plan not found"));
+    }
+    finally {
+      deleteDirectoryRecursively(userDir);
+    }
+  }
+
+  @Test
+  public void testClonePlan_invalidOriginalPlanName() throws Exception {
+    String user = "TestUserClone";
+    Path userDir = Paths.get("build/test-gameplan-data/.users/" + user);
+    Files.createDirectories(userDir);
+    String invalidPlanName = "../../../path/to/invalid/plan";
+    PlanCloneDto cloneDto = new PlanCloneDto();
+    cloneDto.originalPlanName = invalidPlanName;
+
+    try {
+      var response = RestAssured.given() //
+              .contentType("application/json") //
+              .body(cloneDto) //
+              .when().post("/" + user + "/plans") //
+              .then().extract();
+      assertThat(response.statusCode(), is(400));
+      String body = response.body().asString();
+      assertThat(body, containsString("Invalid resource name"));
+      assertThat(body, containsString(invalidPlanName));
+      assertThat(body, containsString("only alphanumeric characters or underscores"));
     }
     finally {
       deleteDirectoryRecursively(userDir);
@@ -302,6 +387,33 @@ public class PlanResourceTest {
   }
 
   @Test
+  public void testUpdatePlan_invalidPlanName() throws Exception {
+    String user = "TestUserUpdateInvalid";
+    Path userDir = Paths.get("build/test-gameplan-data/.users/" + user);
+    Files.createDirectories(userDir);
+    String invalidPlanName = "../../../path/to/invalid/plan";
+    PlanDto planDto = new PlanDto();
+    planDto.name = invalidPlanName;
+    planDto.gameName = "TestGame1";
+    planDto.description = "Should not update";
+    try {
+      var response = RestAssured.given() //
+              .contentType("application/json") //
+              .body(planDto) //
+              .when().put("/" + user + "/plans") //
+              .then().extract();
+      assertThat(response.statusCode(), is(400));
+      String body = response.body().asString();
+      assertThat(body, containsString("Invalid resource name"));
+      assertThat(body, containsString(invalidPlanName));
+      assertThat(body, containsString("only alphanumeric characters or underscores"));
+    }
+    finally {
+      deleteDirectoryRecursively(userDir);
+    }
+  }
+
+  @Test
   public void testUpdatePlan_happyPath() throws Exception {
     String user = "TestUserUpdate3";
     Path userDir = Paths.get("build/test-gameplan-data/.users/" + user);
@@ -375,6 +487,28 @@ public class PlanResourceTest {
       assertThat(response.statusCode(), is(404));
       String body = response.body().asString();
       assertThat(body, containsString("Plan not found"));
+    }
+    finally {
+      deleteDirectoryRecursively(userDir);
+    }
+  }
+
+  @Test
+  public void testDeletePlan_invalidPlanName() throws Exception {
+    String user = "TestUserDelete3";
+    Path userDir = Paths.get("build/test-gameplan-data/.users/" + user);
+    Files.createDirectories(userDir);
+    String invalidPlanName = "../../../path/to/invalid/plan";
+    String encodedPlanName = URLEncoder.encode(invalidPlanName, StandardCharsets.UTF_8);
+    try {
+      var response = RestAssured.given() //
+              .when().delete("/" + user + "/plans/" + encodedPlanName) //
+              .then().extract();
+      assertThat(response.statusCode(), is(400));
+      String body = response.body().asString();
+      assertThat(body, containsString("Invalid resource name"));
+      assertThat(body, containsString(invalidPlanName));
+      assertThat(body, containsString("only alphanumeric characters or underscores"));
     }
     finally {
       deleteDirectoryRecursively(userDir);

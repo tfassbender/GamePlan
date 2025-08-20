@@ -1,4 +1,4 @@
-package net.tfassbender.gameplan.persistence.exception;
+package net.tfassbender.gameplan.exception;
 
 import java.io.Serial;
 

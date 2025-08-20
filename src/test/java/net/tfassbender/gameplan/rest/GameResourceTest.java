@@ -42,10 +42,10 @@ public class GameResourceTest {
   @Test
   public void testGetGames_returnsGameNameAfterAddingFile() throws Exception {
     // Setup: create a game config file
-    String testGameName = "TestGame1.json";
+    String testGameName = "TestGame1";
     Path gamesDir = GAMES_DIR;
     Files.createDirectories(gamesDir);
-    Path testGameFile = gamesDir.resolve(testGameName);
+    Path testGameFile = gamesDir.resolve(testGameName + ".json");
     String minimalGameDtoJson = "{\"name\":\"TestGame1\"}";
     Files.writeString(testGameFile, minimalGameDtoJson);
 
@@ -67,10 +67,10 @@ public class GameResourceTest {
   @Test
   public void testGetGameDetails_returnsGameDto() throws Exception {
     // Setup: create a game config file
-    String testGameName = "TestGame2.json";
+    String testGameName = "TestGame2";
     Path gamesDir = GAMES_DIR;
     Files.createDirectories(gamesDir);
-    Path testGameFile = gamesDir.resolve(testGameName);
+    Path testGameFile = gamesDir.resolve(testGameName + ".json");
     String minimalGameDtoJson = """
             {
               "name":"TestGame2",
@@ -102,5 +102,23 @@ public class GameResourceTest {
       // Cleanup: delete the test file
       Files.deleteIfExists(testGameFile);
     }
+  }
+
+  @Test
+  public void testGetGameDetails_invalidName() throws Exception {
+    String invalidGameName = "../../../invalid/game/name";
+    String encodedGameName = java.net.URLEncoder.encode(invalidGameName, java.nio.charset.StandardCharsets.UTF_8);
+    var response = RestAssured.given() //
+            .header("Accept", "application/json") //
+            .when().get("/games/" + encodedGameName) //
+            .then().extract();
+    int statusCode = response.statusCode();
+    String body = response.body().asString();
+    log.info("GET /games/{} response status: {} body: {}", encodedGameName, statusCode, body);
+    // Expecting 400 Bad Request
+    assertThat(statusCode, is(400));
+    assertThat(body, org.hamcrest.Matchers.containsString("Invalid game name"));
+    assertThat(body, org.hamcrest.Matchers.containsString(invalidGameName));
+    assertThat(body, org.hamcrest.Matchers.containsString("only alphanumeric characters or underscores"));
   }
 }

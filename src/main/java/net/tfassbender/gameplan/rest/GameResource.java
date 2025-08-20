@@ -6,10 +6,13 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import net.tfassbender.gameplan.dto.ErrorResponse;
 import net.tfassbender.gameplan.dto.GameDto;
+import net.tfassbender.gameplan.exception.GamePlanInvalidResourceNameException;
+import net.tfassbender.gameplan.exception.GamePlanPersistenceException;
+import net.tfassbender.gameplan.exception.GamePlanResourceNotFoundException;
 import net.tfassbender.gameplan.persistence.GameService;
-import net.tfassbender.gameplan.persistence.exception.GamePlanPersistenceException;
-import net.tfassbender.gameplan.persistence.exception.GamePlanResourceNotFoundException;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Path("/games")
@@ -42,9 +45,15 @@ public class GameResource {
   @Path("/{gameName}")
   @GET
   public Response getGameDetails(@PathParam("gameName") String gameName) {
+    String decodedGameName = URLDecoder.decode(gameName, StandardCharsets.UTF_8);
+
     try {
-      GameDto gameDetails = gameService.getGame(gameName);
+      GameDto gameDetails = gameService.getGame(decodedGameName);
       return Response.ok(gameDetails).build();
+    }
+    catch (GamePlanInvalidResourceNameException e) {
+      return Response.status(Response.Status.BAD_REQUEST) //
+              .entity(new ErrorResponse("Invalid game name: " + e.getMessage())).build();
     }
     catch (GamePlanResourceNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND) //

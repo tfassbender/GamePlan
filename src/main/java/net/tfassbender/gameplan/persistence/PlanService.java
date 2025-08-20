@@ -1,7 +1,7 @@
 package net.tfassbender.gameplan.persistence;
 
 import net.tfassbender.gameplan.dto.PlanDto;
-import net.tfassbender.gameplan.persistence.exception.GamePlanPersistenceException;
+import net.tfassbender.gameplan.exception.GamePlanPersistenceException;
 
 import java.util.List;
 

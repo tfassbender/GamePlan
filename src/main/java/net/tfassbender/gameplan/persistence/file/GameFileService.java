@@ -3,9 +3,10 @@ package net.tfassbender.gameplan.persistence.file;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import net.tfassbender.gameplan.dto.GameDto;
+import net.tfassbender.gameplan.exception.GamePlanPersistenceException;
+import net.tfassbender.gameplan.exception.GamePlanResourceNotFoundException;
 import net.tfassbender.gameplan.persistence.GameService;
-import net.tfassbender.gameplan.persistence.exception.GamePlanPersistenceException;
-import net.tfassbender.gameplan.persistence.exception.GamePlanResourceNotFoundException;
+import net.tfassbender.gameplan.util.FileUtil;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 public class GameFileService implements GameService {
 
   public static final String GAMES_SUB_DIR = "games";
+  public static final String GAME_CONFIG_FILE_EXTENSION = ".json";
 
   @ConfigProperty(name = "game_plan.path")
   private String gamePlanPath;
@@ -31,8 +33,9 @@ public class GameFileService implements GameService {
 
     try (Stream<Path> files = Files.list(gamesDir)) {
       return files.filter(Files::isRegularFile) //
-              .filter(path -> path.toString().endsWith(".json")) //
+              .filter(path -> path.toString().endsWith(GAME_CONFIG_FILE_EXTENSION)) //
               .map(path -> path.getFileName().toString()) //
+              .map(fileName -> fileName.substring(0, fileName.length() - GAME_CONFIG_FILE_EXTENSION.length())) // Remove file extension
               .toList();
     }
     catch (IOException e) {
@@ -41,7 +44,9 @@ public class GameFileService implements GameService {
   }
 
   public GameDto getGame(String gameName) throws GamePlanPersistenceException {
-    Path gameFilePath = Paths.get(gamePlanPath, GAMES_SUB_DIR, gameName);
+    FileUtil.checkResourceNameValid(gameName);
+
+    Path gameFilePath = Paths.get(gamePlanPath, GAMES_SUB_DIR, gameName + GAME_CONFIG_FILE_EXTENSION);
     if (!Files.exists(gameFilePath)) {
       throw new GamePlanResourceNotFoundException("A config for a game with the name '" + gameName + "' does not exist.");
     }
@@ -51,7 +56,7 @@ public class GameFileService implements GameService {
       return parseGameConfig(gameName, content);
     }
     catch (IOException e) {
-      throw new GamePlanPersistenceException("Failed to read game config file: " + gameName, e);
+      throw new GamePlanPersistenceException("Failed to read game config file: " + gameName + GAME_CONFIG_FILE_EXTENSION, e);
     }
   }
 

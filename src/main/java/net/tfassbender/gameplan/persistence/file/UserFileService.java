@@ -1,10 +1,10 @@
 package net.tfassbender.gameplan.persistence.file;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import net.tfassbender.gameplan.exception.GamePlanPersistenceException;
+import net.tfassbender.gameplan.exception.GamePlanResourceAlreadyExistingException;
+import net.tfassbender.gameplan.exception.GamePlanResourceNotFoundException;
 import net.tfassbender.gameplan.persistence.UserService;
-import net.tfassbender.gameplan.persistence.exception.GamePlanPersistenceException;
-import net.tfassbender.gameplan.persistence.exception.GamePlanResourceAlreadyExistingException;
-import net.tfassbender.gameplan.persistence.exception.GamePlanResourceNotFoundException;
 import net.tfassbender.gameplan.util.FileUtil;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -41,6 +41,8 @@ public class UserFileService implements UserService {
   }
 
   public void createUser(String name) throws GamePlanPersistenceException {
+    FileUtil.checkResourceNameValid(name);
+
     Path userDir = Paths.get(gamePlanPath, USERS_SUB_DIR, name);
     if (Files.exists(userDir)) {
       throw new GamePlanResourceAlreadyExistingException("User '" + name + "' already exists.");
