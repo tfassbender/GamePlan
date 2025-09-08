@@ -50,6 +50,13 @@ public class UserFileService implements UserService {
 
     FileUtil.createDirectory(userDir);
   }
+
+  public boolean userExists(String name) throws GamePlanPersistenceException {
+    FileUtil.checkResourceNameValid(name);
+
+    Path userDir = Paths.get(gamePlanPath, USERS_SUB_DIR, name);
+    return Files.exists(userDir) && Files.isDirectory(userDir);
+  }
 }
 
 

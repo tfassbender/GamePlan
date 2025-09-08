@@ -8,4 +8,5 @@ public interface UserService {
 
   List<String> getUsers() throws GamePlanPersistenceException;
   void createUser(String name) throws GamePlanPersistenceException;
+  boolean userExists(String name) throws GamePlanPersistenceException;
 }
