@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import LoginPage from "./LoginPage";
+import DashboardPage from "./DashboardPage";
 import { loginUser, signUpUser } from "./api";
 import "./App.css";
 
@@ -45,7 +46,12 @@ const App: React.FC = () => {
     );
   }
 
-  return <h1>Hello, {username}! Welcome to GamePlan.</h1>;
+  const handleLogout = () => {
+    setUsername(null);
+    setError(null);
+  };
+
+  return <DashboardPage username={username} onLogout={handleLogout} />;
 };
 
 export default App;

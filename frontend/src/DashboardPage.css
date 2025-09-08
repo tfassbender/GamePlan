@@ -1,0 +1,124 @@
+.dashboard-container {
+  max-width: 500px;
+  max-height: 85vh;
+  margin: 4vh 5vw;
+  padding: 24px;
+  background: #23272f;
+  border-radius: 10px;
+  color: #f1f1f1;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.logout-btn {
+  background: #ff3333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 16px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: 'Orbitron', Arial, sans-serif;
+}
+
+.dashboard-meta {
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.dashboard-error {
+  color: #ff3333;
+  background: #2a0000;
+  border: 1px solid #ff3333;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.dashboard-loading {
+  text-align: center;
+  font-size: 16px;
+  margin: 24px 0;
+}
+
+.dashboard-section {
+  margin-bottom: 28px;
+}
+
+.dashboard-section h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  font-family: 'Orbitron', Arial, sans-serif;
+}
+
+.dashboard-game-types {
+  display: flex;
+}
+
+.dashboard-game-types select {
+  margin-right: 10px;
+  padding: 6px 12px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #23272f;
+  color: #f1f1f1;
+  outline: none;
+  transition: border 0.2s;
+  flex: 1;
+}
+
+.dashboard-game-types select:focus {
+  border: 1.5px solid #00bfff;
+}
+
+.create-plan-btn {
+  background: #00bfff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: 'Orbitron', Arial, sans-serif;
+}
+
+.create-plan-btn:disabled {
+  background: #444;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.create-plan-btn:not(:disabled):hover {
+  background: #0099cc;
+}
+
+.dashboard-section ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 0;
+}
+
+.dashboard-section li {
+  background: #2c313a;
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.dashboard-plans-list {
+  max-height: 55vh;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
