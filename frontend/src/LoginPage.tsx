@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import "./LoginPage.css";
 
 interface LoginPageProps {
-  onLogin: (username: string) => void;
-  onSignUp: (username: string) => void;
+  onLogin: (username: string) => void | Promise<void>;
+  onSignUp: (username: string) => void | Promise<void>;
+  error?: string | null;
+  loading?: boolean;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp }) => {
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp, error, loading }) => {
   const [username, setUsername] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,11 +29,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp }) => {
 
   return (
     <div className="login-container">
-      <header style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "1.5rem" }}>
-        <img src="icons/logo.png" alt="GamePlan Logo" style={{ width: 64, height: 64, marginBottom: 8 }} />
-        <h1 style={{ margin: 0, fontSize: "2.2rem", color: "#f1f1f1", letterSpacing: 1 }}>GamePlan</h1>
+      <header className="login-header">
+        <img src="icons/logo.png" alt="GamePlan Logo" className="login-logo" />
+        <h1 className="login-headline">GamePlan</h1>
       </header>
       <h2 className="login-title">Login</h2>
+      {error && <div className="login-error">{error}</div>}
       <input
         type="text"
         placeholder="Enter username"
@@ -39,11 +42,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp }) => {
         onChange={handleInputChange}
         className="login-input"
         autoFocus
+        disabled={loading}
       />
       <div className="login-buttons">
-        <button onClick={handleLogin}>Login</button>
-        <button onClick={handleSignUp}>Sign Up</button>
+        <button onClick={handleLogin} disabled={loading}>Login</button>
+        <button onClick={handleSignUp} disabled={loading}>Sign Up</button>
       </div>
+      {loading && <div className="login-loading">Loading...</div>}
     </div>
   );
 };
