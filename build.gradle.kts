@@ -15,6 +15,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.12")
     implementation("org.slf4j:slf4j-simple:2.0.12")
     implementation("org.apache.commons:commons-lang3:3.14.0")
+    implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("io.quarkus:quarkus-junit5")
@@ -39,7 +40,7 @@ tasks.register("buildFrontend") {
             }
         }
         val buildDir = file("frontend/build")
-        val resourcesDir = file("src/main/resources/META-INF/resources")
+        val resourcesDir = file("src/main/resources/META-INF/resources/app")
         if (buildDir.exists()) {
             buildDir.walkTopDown().forEach { file ->
                 if (file.isFile) {

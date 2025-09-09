@@ -1,13 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, useNavigate, useParams } from "react-router-dom";
 import LoginPage from "./LoginPage";
 import DashboardPage from "./DashboardPage";
 import { loginUser, signUpUser } from "./api";
 import "./App.css";
 
-const App: React.FC = () => {
+const AppRoutes: React.FC = () => {
+  const navigate = useNavigate();
+  const { username: routeUsername } = useParams<{ username: string }>();
   const [username, setUsername] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  // Sync state with URL
+  useEffect(() => {
+    if (routeUsername) setUsername(routeUsername);
+    else setUsername(null);
+  }, [routeUsername]);
 
   const handleLogin = async (name: string) => {
     setLoading(true);
@@ -15,6 +24,7 @@ const App: React.FC = () => {
     try {
       await loginUser(name);
       setUsername(name);
+      navigate(`/${name}`);
     } catch (e: any) {
       setError(e?.response?.data?.message || "Login failed - user may not exist");
     } finally {
@@ -28,11 +38,18 @@ const App: React.FC = () => {
     try {
       await signUpUser(name);
       setUsername(name);
+      navigate(`/${name}`);
     } catch (e: any) {
       setError(e?.response?.data?.message || "Sign up failed - user may already exist");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogout = () => {
+    setUsername(null);
+    setError(null);
+    navigate(`/`);
   };
 
   if (!username) {
@@ -46,12 +63,17 @@ const App: React.FC = () => {
     );
   }
 
-  const handleLogout = () => {
-    setUsername(null);
-    setError(null);
-  };
-
   return <DashboardPage username={username} onLogout={handleLogout} />;
 };
+
+const App: React.FC = () => (
+  <BrowserRouter basename="/app">
+    <Routes>
+      <Route path="/" element={<AppRoutes />} />
+      <Route path=":username" element={<AppRoutes />} />
+      <Route path="/:username" element={<AppRoutes />} />
+    </Routes>
+  </BrowserRouter>
+);
 
 export default App;
