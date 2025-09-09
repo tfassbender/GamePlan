@@ -1,0 +1,121 @@
+.plan-details-container {
+  background: #181a1b;
+  color: #f1f1f1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+.plan-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem 1rem 1.5rem;
+  background: #23272a;
+  border-bottom: 1px solid #222;
+  position: relative;
+}
+
+.plan-details-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+  color: #fff;
+}
+
+.plan-details-menu-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.plan-details-menu-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.plan-details-menu {
+  background: #23272a;
+  border-radius: 8px;
+  margin: 1.5rem 1.5rem 0 0;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.plan-details-menu button {
+  background: #00bfff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+  font-family: 'Orbitron', Arial, sans-serif;
+}
+
+.plan-details-menu button:hover {
+  background: #0099cc;
+}
+
+.plan-details-menu .plan-details-delete-btn {
+  background: #ff3333;
+}
+
+.plan-details-menu .plan-details-delete-btn:hover {
+  background: #d44;
+}
+
+.plan-details-content {
+  flex: 1;
+  padding: 2rem 1.5rem 1rem 1.5rem;
+  background: #181a1b;
+  min-height: 200px;
+}
+
+.plan-details-resources {
+  background: #23272a;
+  color: #f1f1f1;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #222;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+
+.plan-details-sum-symbol {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-right: 1rem;
+  color: #ffd700;
+  min-width: 1rem;
+  text-align: left;
+}
+
+.plan-details-sum-green {
+  color: #3ecf4a;
+}
+
+.plan-details-sum-red {
+  color: #e74c3c;
+}
+
+.plan-details-resources-text {
+  font-size: 1.1rem;
+  color: #f1f1f1;
+  text-align: left;
+}

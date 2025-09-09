@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getGames, getPlans, createPlan } from "./api";
 import "./DashboardPage.css";
 
@@ -13,6 +14,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
   const [selectedGame, setSelectedGame] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -76,7 +78,14 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
               <div className="dashboard-plans-list">
                 <ul>
                   {plans.map(plan => (
-                    <li key={plan}>{plan}</li>
+                    <li
+                      key={plan}
+                      className="dashboard-plan-item"
+                      onClick={() => navigate(`/${username}/plan/${encodeURIComponent(plan)}`)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {plan}
+                    </li>
                   ))}
                 </ul>
               </div>
