@@ -3,6 +3,7 @@ import "./PlanDetailsPage.css";
 import { fetchPlan, updatePlan } from "./api";
 import type { PlanDto } from "./types";
 import PlanStageEditor from "./PlanStageEditor";
+import { calculatePlanResources } from "./planResourceUtils";
 
 interface PlanDetailsPageProps {
   username: string;
@@ -63,6 +64,9 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     alert("Delete plan (not implemented)");
   };
 
+  // Calculate final resources and validity for the whole plan
+  const finalResourceResult = plan ? calculatePlanResources(plan.stages, true) : { finalResources: {}, isValid: true };
+
   return (
     <div className="plan-details-container">
       <div className="plan-details-header">
@@ -99,28 +103,41 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
             </div>
             {/* Render stages or other plan details here */}
             <div className="plan-details-stages-list">
-              {plan.stages.map((stage, idx) => (
-                <PlanStageEditor
-                  key={idx}
-                  index={idx}
-                  stage={stage}
-                  onChange={updatedStage => {
-                    const newStages = plan.stages.map((s, i) => i === idx ? updatedStage : s);
-                    setPlan({ ...plan, stages: newStages });
-                  }}
-                />
-              ))}
+              {plan.stages.map((stage, idx) => {
+                // Calculate resources before this stage
+                const resourcesBeforeStage = idx === 0
+                  ? {} // start with zeroes
+                  : calculatePlanResources(plan.stages.slice(0, idx), false).finalResources;
+                return (
+                  <PlanStageEditor
+                    key={idx}
+                    index={idx}
+                    stage={stage}
+                    currentResources={resourcesBeforeStage}
+                    onChange={updatedStage => {
+                      const newStages = plan.stages.map((s, i) => i === idx ? updatedStage : s);
+                      setPlan({ ...plan, stages: newStages });
+                    }}
+                  />
+                );
+              })}
             </div>
           </div>
         )}
       </div>
       <div className="plan-details-resources">
         <span
-          className={`plan-details-sum-symbol ${resourcesNonNegative ? "plan-details-sum-green" : "plan-details-sum-red"}`}
+          className={`plan-details-sum-symbol ${finalResourceResult.isValid ? "plan-details-sum-green" : "plan-details-sum-red"}`}
         >
           &#931;
         </span>
-        <span className="plan-details-resources-text">(dummy resources)</span>
+        <span className="plan-details-resources-text">
+          {Object.entries(finalResourceResult.finalResources).map(([resource, value]) => (
+            <span key={resource} style={{ marginRight: "1em" }}>
+              {resource}: {value}
+            </span>
+          ))}
+        </span>
       </div>
     </div>
   );
