@@ -81,7 +81,7 @@
 
 .plan-details-content {
   flex: 1;
-  padding: 2rem 1.5rem 1rem 1.5rem;
+  padding: 1rem 1.5rem 1rem 1.5rem;
   background: #181a1b;
   min-height: 200px;
 }
@@ -118,4 +118,31 @@
   font-size: 1.1rem;
   color: #f1f1f1;
   text-align: left;
+}
+
+.plan-details-description-textarea {
+  width: 100%;
+  min-height: 3em;
+  max-width: 100%;
+  font-size: 1rem;
+  padding: 0.5em;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #23272f;
+  color: #f0f0f0;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.plan-details-description-textarea:focus {
+  outline: none;
+  border-color: #4e8cff;
+  background: #23272f;
+}
+
+.plan-details-description-label {
+  display: none;
 }

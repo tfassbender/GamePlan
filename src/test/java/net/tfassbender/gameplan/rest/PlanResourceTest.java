@@ -47,7 +47,7 @@ public class PlanResourceTest {
   public void testGetPlans_returnsEmptyList() {
     var response = RestAssured.given() //
             .header("Accept", "application/json") //
-            .when().get("/" + TEST_USER + "/plans") //
+            .when().get("/users/" + TEST_USER + "/plans") //
             .then().statusCode(200) //
             .extract();
     List<?> plans = response.body().as(List.class);
@@ -61,7 +61,7 @@ public class PlanResourceTest {
     try {
       var response = RestAssured.given() //
               .header("Accept", "application/json") //
-              .when().get("/" + TEST_USER + "/plans") //
+              .when().get("/users/" + TEST_USER + "/plans") //
               .then().statusCode(200) //
               .extract();
       List<String> plans = response.body().jsonPath().getList("", String.class);
@@ -78,7 +78,7 @@ public class PlanResourceTest {
     String encodedPlanName = URLEncoder.encode(invalidUserName, StandardCharsets.UTF_8);
     var response = RestAssured.given() //
             .header("Accept", "application/json") //
-            .when().get("/" + encodedPlanName + "/plans") //
+            .when().get("/users/" + encodedPlanName + "/plans") //
             .then().extract();
     int statusCode = response.statusCode();
     String body = response.body().asString();
@@ -114,7 +114,7 @@ public class PlanResourceTest {
     try {
       var response = RestAssured.given() //
               .header("Accept", "application/json") //
-              .when().get("/" + TEST_USER + "/plans/" + planName) //
+              .when().get("/users/" + TEST_USER + "/plans/" + planName) //
               .then().statusCode(200).extract();
       PlanDto planDto = response.body().as(PlanDto.class);
       assertThat(planDto.name, is(planName));
@@ -139,7 +139,7 @@ public class PlanResourceTest {
     String encodedPlanName = URLEncoder.encode(invalidPlanName, StandardCharsets.UTF_8);
     var response = RestAssured.given() //
             .header("Accept", "application/json") //
-            .when().get("/" + TEST_USER + "/plans/" + encodedPlanName) //
+            .when().get("/users/" + TEST_USER + "/plans/" + encodedPlanName) //
             .then().extract();
     int statusCode = response.statusCode();
     String body = response.body().asString();
@@ -163,7 +163,7 @@ public class PlanResourceTest {
     try {
       var response = RestAssured.given() //
               .header("Accept", "application/json") //
-              .when().post("/" + nonExistentUser + "/plans/" + gameName) //
+              .when().post("/users/" + nonExistentUser + "/plans/" + gameName) //
               .then().extract();
       assertThat(response.statusCode(), is(404));
       String body = response.body().asString();
@@ -180,7 +180,7 @@ public class PlanResourceTest {
     String nonExistentGame = "NonExistentGame";
     var response = RestAssured.given() //
             .header("Accept", "application/json") //
-            .when().post("/" + user + "/plans/" + nonExistentGame) //
+            .when().post("/users/" + user + "/plans/" + nonExistentGame) //
             .then().extract();
     assertThat(response.statusCode(), is(404));
     String body = response.body().asString();
@@ -203,7 +203,7 @@ public class PlanResourceTest {
     try {
       var response = RestAssured.given() //
               .header("Accept", "application/json") //
-              .when().post("/" + user + "/plans/" + gameName) //
+              .when().post("/users/" + user + "/plans/" + gameName) //
               .then().statusCode(201) //
               .extract();
       PlanDto planDto = response.body().as(PlanDto.class);
@@ -226,7 +226,7 @@ public class PlanResourceTest {
     try {
       var response = RestAssured.given() //
               .header("Accept", "application/json") //
-              .when().post("/" + user + "/plans/" + encodedGameName) //
+              .when().post("/users/" + user + "/plans/" + encodedGameName) //
               .then().extract();
       assertThat(response.statusCode(), is(400));
       String body = response.body().asString();
@@ -248,7 +248,7 @@ public class PlanResourceTest {
     var response = RestAssured.given() //
             .contentType("application/json") //
             .body(cloneDto) //
-            .when().post("/" + user + "/plans") //
+            .when().post("/users/" + user + "/plans") //
             .then().extract();
     assertThat(response.statusCode(), is(404));
     String body = response.body().asString();
@@ -267,7 +267,7 @@ public class PlanResourceTest {
       var response = RestAssured.given() //
               .contentType("application/json") //
               .body(cloneDto) //
-              .when().post("/" + user + "/plans") //
+              .when().post("/users/" + user + "/plans") //
               .then().extract();
       assertThat(response.statusCode(), is(404));
       String body = response.body().asString();
@@ -291,7 +291,7 @@ public class PlanResourceTest {
       var response = RestAssured.given() //
               .contentType("application/json") //
               .body(cloneDto) //
-              .when().post("/" + user + "/plans") //
+              .when().post("/users/" + user + "/plans") //
               .then().extract();
       assertThat(response.statusCode(), is(400));
       String body = response.body().asString();
@@ -328,7 +328,7 @@ public class PlanResourceTest {
       var response = RestAssured.given() //
               .contentType("application/json") //
               .body(cloneDto) //
-              .when().post("/" + user + "/plans") //
+              .when().post("/users/" + user + "/plans") //
               .then().statusCode(201).extract();
 
       PlanDto clonedPlan = response.body().as(PlanDto.class);
@@ -355,7 +355,7 @@ public class PlanResourceTest {
     var response = RestAssured.given() //
             .contentType("application/json") //
             .body(planDto) //
-            .when().put("/" + user + "/plans") //
+            .when().put("/users/" + user + "/plans") //
             .then().extract();
     assertThat(response.statusCode(), is(404));
     String body = response.body().asString();
@@ -375,7 +375,7 @@ public class PlanResourceTest {
       var response = RestAssured.given() //
               .contentType("application/json") //
               .body(planDto) //
-              .when().put("/" + user + "/plans") //
+              .when().put("/users/" + user + "/plans") //
               .then().extract();
       assertThat(response.statusCode(), is(404));
       String body = response.body().asString();
@@ -400,7 +400,7 @@ public class PlanResourceTest {
       var response = RestAssured.given() //
               .contentType("application/json") //
               .body(planDto) //
-              .when().put("/" + user + "/plans") //
+              .when().put("/users/" + user + "/plans") //
               .then().extract();
       assertThat(response.statusCode(), is(400));
       String body = response.body().asString();
@@ -442,7 +442,7 @@ public class PlanResourceTest {
       var response = RestAssured.given() //
               .contentType("application/json") //
               .body(planDto) //
-              .when().put("/" + user + "/plans") //
+              .when().put("/users/" + user + "/plans") //
               .then().statusCode(200) //
               .extract();
       PlanDto updatedPlan = response.body().as(PlanDto.class);
@@ -467,7 +467,7 @@ public class PlanResourceTest {
     String user = "TestUserDelete1";
     String planName = "NonExistentPlan";
     var response = RestAssured.given() //
-            .when().delete("/" + user + "/plans/" + planName) //
+            .when().delete("/users/" + user + "/plans/" + planName) //
             .then().extract();
     assertThat(response.statusCode(), is(404));
     String body = response.body().asString();
@@ -482,7 +482,7 @@ public class PlanResourceTest {
     String planName = "NonExistentPlan";
     try {
       var response = RestAssured.given() //
-              .when().delete("/" + user + "/plans/" + planName) //
+              .when().delete("/users/" + user + "/plans/" + planName) //
               .then().extract();
       assertThat(response.statusCode(), is(404));
       String body = response.body().asString();
@@ -502,7 +502,7 @@ public class PlanResourceTest {
     String encodedPlanName = URLEncoder.encode(invalidPlanName, StandardCharsets.UTF_8);
     try {
       var response = RestAssured.given() //
-              .when().delete("/" + user + "/plans/" + encodedPlanName) //
+              .when().delete("/users/" + user + "/plans/" + encodedPlanName) //
               .then().extract();
       assertThat(response.statusCode(), is(400));
       String body = response.body().asString();
@@ -533,7 +533,7 @@ public class PlanResourceTest {
     Files.writeString(planFile, planJson);
     try {
       var response = RestAssured.given() //
-              .when().delete("/" + user + "/plans/" + planName) //
+              .when().delete("/users/" + user + "/plans/" + planName) //
               .then().statusCode(204) //
               .extract();
       assertThat(Files.exists(planFile), is(false));

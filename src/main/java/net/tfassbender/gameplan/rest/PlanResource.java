@@ -16,7 +16,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@Path("/{username}/plans")
+@Path("users/{username}/plans")
 @Produces(MediaType.APPLICATION_JSON)
 public class PlanResource {
 

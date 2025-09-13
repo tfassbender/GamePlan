@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./PlanDetailsPage.css";
+import { fetchPlan, updatePlan } from "./api";
+import type { PlanDto } from "./types";
 
 interface PlanDetailsPageProps {
   username: string;
@@ -9,8 +11,38 @@ interface PlanDetailsPageProps {
 
 const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, onBack }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  // Placeholder for resource state: true = all non-negative, false = negative at some point
   const [resourcesNonNegative, setResourcesNonNegative] = useState(true); // will be computed from plan steps in the future
+  const [plan, setPlan] = useState<PlanDto | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetchPlan(username, planName)
+      .then(data => {
+        setPlan(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [username, planName]);
+
+  // Debounced update effect
+  useEffect(() => {
+    if (!plan) return;
+    // Don't send update on initial load
+    if (loading) return;
+    const handler = setTimeout(() => {
+      updatePlan(username, plan)
+        .catch(err => {
+          // Optionally handle error (e.g., show a message)
+        });
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [plan?.description]);
 
   const handleAddStage = () => {
     // TODO: Implement add stage logic
@@ -49,7 +81,24 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
         )}
       </div>
       <div className="plan-details-content">
-        {/* Plan steps will go here */}
+        {loading && <div>Loading...</div>}
+        {error && <div className="plan-details-error">{error}</div>}
+        {plan && (
+          <div>
+            <div>
+              <label htmlFor="plan-description" className="plan-details-description-label">Description:</label>
+              <textarea
+                id="plan-description"
+                value={plan.description ?? ""}
+                placeholder="Description"
+                onChange={e => setPlan({ ...plan, description: e.target.value })}
+                rows={3}
+                className="plan-details-description-textarea"
+              />
+            </div>
+            {/* Render stages or other plan details here */}
+          </div>
+        )}
       </div>
       <div className="plan-details-resources">
         <span
