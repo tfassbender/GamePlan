@@ -69,6 +69,28 @@ Modern board games often demand forward-thinking strategies and careful resource
 distraction-free space to simulate and refine their ideas—whether it's to prep for a competitive tournament or just
 optimize that next epic engine combo.
 
+## 🏗️ Building and Running Locally
+
+To build the React frontend run the gradle task `buildFrontend` (this should be done before building the quarkus
+server):
+
+```bash
+./gradlew buildFrontend
+```
+
+To start the quarkus server (or build the project into a jar) run:
+
+```bash
+./gradlew quarkusDev
+```
+
+or
+
+```bash
+./gradlew quarkusBuild
+java -jar build/quarkus-app/quarkus-run.jar
+```
+
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
