@@ -1,0 +1,65 @@
+.resource-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.3em;
+}
+
+.resource-input-label {
+  color: #f1f1f1;
+  font-size: 1em;
+  min-width: 2em;
+  text-align: left;
+}
+
+.resource-input-btn {
+  background: #23272a;
+  color: #00bfff;
+  border: none;
+  border-radius: 50%;
+  width: 2.2em;
+  height: 2.2em;
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  touch-action: manipulation;
+}
+
+.resource-input-btn:active {
+  background: #00bfff;
+  color: #fff;
+}
+
+.resource-input-spinner {
+  width: 4em;
+  background: #181a1b;
+  color: #f1f1f1;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 0.2em 0.8em; /* Increased padding for easier touch */
+  font-size: 1em; /* Larger font for mobile */
+  transition: border-color 0.2s;
+  min-height: 2.5em; /* Make spinner buttons larger */
+  text-align: center;
+  touch-action: manipulation;
+}
+
+.resource-input-spinner:focus {
+  outline: none;
+  border-color: #4e8cff;
+}
+
+/* Hide default spinner arrows for consistency with custom buttons */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}

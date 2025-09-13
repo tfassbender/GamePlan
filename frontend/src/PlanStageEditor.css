@@ -1,0 +1,67 @@
+.plan-stage-editor {
+  background: #23272a;
+  border-radius: 8px;
+  margin-bottom: 1.2em;
+  padding: 1em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  color: #f1f1f1;
+}
+
+.plan-stage-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1em;
+}
+
+.plan-stage-number {
+  font-size: 1em;
+  font-weight: bold;
+  background: #181a1b;
+  border-radius: 50%;
+  width: 2em;
+  height: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00bfff;
+}
+
+.plan-stage-description {
+  flex: 1;
+  min-width: 0;
+  font-size: 1em;
+  padding: 0.4em;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #181a1b;
+  color: #f0f0f0;
+  resize: vertical;
+  min-height: 2.5em;
+  max-width: 100%;
+  transition: border-color 0.2s;
+}
+
+.plan-stage-description:focus {
+  outline: none;
+  border-color: #4e8cff;
+}
+
+.plan-stage-resources {
+  margin-top: 0.7em;
+  margin-bottom: 0.5em;
+}
+
+.plan-stage-resource-spinners {
+  background: #181a1b;
+  border-radius: 4px;
+  padding: 0.5em;
+  color: #bbb;
+  font-size: 0.95em;
+}
+
+.plan-stage-current-resources {
+  margin-top: 0.5em;
+  color: #3ecf4a;
+  font-size: 0.98em;
+}
+

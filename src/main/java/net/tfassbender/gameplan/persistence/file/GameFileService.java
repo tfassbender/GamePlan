@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class GameFileService implements GameService {
 
-  public static final String GAMES_SUB_DIR = "games";
+  public static final String GAMES_SUB_DIR = ".games";
   public static final String GAME_CONFIG_FILE_EXTENSION = ".json";
 
   @ConfigProperty(name = "game_plan.path")

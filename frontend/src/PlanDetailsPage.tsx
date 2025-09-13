@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./PlanDetailsPage.css";
 import { fetchPlan, updatePlan } from "./api";
 import type { PlanDto } from "./types";
+import PlanStageEditor from "./PlanStageEditor";
 
 interface PlanDetailsPageProps {
   username: string;
@@ -30,7 +31,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
       });
   }, [username, planName]);
 
-  // Debounced update effect
+  // Debounced update effect for plan description and stages
   useEffect(() => {
     if (!plan) return;
     // Don't send update on initial load
@@ -42,7 +43,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
         });
     }, 300);
     return () => clearTimeout(handler);
-  }, [plan?.description]);
+  }, [plan?.description, plan?.stages]);
 
   const handleAddStage = () => {
     // TODO: Implement add stage logic
@@ -97,6 +98,19 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
               />
             </div>
             {/* Render stages or other plan details here */}
+            <div className="plan-details-stages-list">
+              {plan.stages.map((stage, idx) => (
+                <PlanStageEditor
+                  key={idx}
+                  index={idx}
+                  stage={stage}
+                  onChange={updatedStage => {
+                    const newStages = plan.stages.map((s, i) => i === idx ? updatedStage : s);
+                    setPlan({ ...plan, stages: newStages });
+                  }}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
