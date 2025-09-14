@@ -38,3 +38,11 @@ export async function updatePlan(username: string, plan: PlanDto): Promise<PlanD
   const res = await axios.put(`${USERS_ENDPOINT}/${encodeURIComponent(username)}/${PLANS_SUB_PATH}`, plan);
   return res.data;
 }
+
+export async function clonePlan(username: string, originalPlanName: string): Promise<PlanDto> {
+  const res = await axios.post(
+    `${USERS_ENDPOINT}/${encodeURIComponent(username)}/${PLANS_SUB_PATH}`,
+    { originalPlanName }
+  );
+  return res.data;
+}

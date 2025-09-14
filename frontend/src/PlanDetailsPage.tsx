@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./PlanDetailsPage.css";
-import { fetchPlan, updatePlan } from "./api";
+import { fetchPlan, updatePlan, clonePlan } from "./api";
 import type { PlanDto } from "./types";
 import PlanStageEditor from "./PlanStageEditor";
 import { calculatePlanResources } from "./planResourceUtils";
@@ -47,15 +47,32 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
   }, [plan?.description, plan?.stages]);
 
   const handleAddStage = () => {
-    // TODO: Implement add stage logic
+    if (!plan) return;
+    // Create a new stage with all resource types set to 0
+    const newStage = {
+      description: "",
+      resourceChanges: Object.fromEntries(Object.keys(plan.resourceTypes).map(r => [r, 0]))
+    };
+    setPlan({ ...plan, stages: [...plan.stages, newStage] });
     setMenuOpen(false);
-    alert("Add stage (not implemented)");
   };
 
-  const handleClone = () => {
-    // TODO: Implement clone logic
+  const navigate = (window as any).appNavigate || ((url: string) => { window.location.href = url; });
+
+  const handleClone = async () => {
+    if (!plan) return;
     setMenuOpen(false);
-    alert("Clone plan (not implemented)");
+    try {
+      const clonedPlan = await clonePlan(username, plan.name);
+      // Use react-router navigate if available, otherwise fallback
+      if ((window as any).appNavigate) {
+        (window as any).appNavigate(`/app/${username}/plan/${clonedPlan.name}`);
+      } else {
+        window.location.href = `/app/${username}/plan/${clonedPlan.name}`;
+      }
+    } catch (e: any) {
+      setError(e?.response?.data?.message || "Failed to clone plan");
+    }
   };
 
   const handleDelete = () => {

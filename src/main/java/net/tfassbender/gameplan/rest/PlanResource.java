@@ -92,7 +92,7 @@ public class PlanResource {
       PlanDto originalPlan = planService.getPlan(decodedUsername, planCloneDto.originalPlanName);
       PlanDto clonedPlan = planService.createPlan(decodedUsername, originalPlan.gameName);
       clonedPlan.stages = originalPlan.stages; // Copy stages from the original plan
-      clonedPlan.description = originalPlan.description;
+      clonedPlan.description = "Cloned from '" + originalPlan.name + "'\n" + originalPlan.description;
       planService.savePlan(decodedUsername, clonedPlan); // Save the cloned plan
 
       return Response.status(Response.Status.CREATED).entity(clonedPlan).build();
