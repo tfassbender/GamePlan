@@ -1,10 +1,56 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { BrowserRouter, Routes, Route, useNavigate, useParams } from "react-router-dom";
 import LoginPage from "./LoginPage";
 import DashboardPage from "./DashboardPage";
 import PlanDetailsPage from "./PlanDetailsPage";
 import { loginUser, signUpUser } from "./api";
 import "./App.css";
+import ConfirmDialog, { ConfirmDialogType } from "./ConfirmDialog";
+
+// Context for showing confirm dialog
+interface ConfirmDialogContextType {
+  showConfirmDialog: (options: {
+    title?: string;
+    message: string;
+    onConfirm: () => void;
+    type?: ConfirmDialogType;
+  }) => void;
+}
+const ConfirmDialogContext = createContext<ConfirmDialogContextType | undefined>(undefined);
+
+export const useConfirmDialog = () => {
+  const ctx = useContext(ConfirmDialogContext);
+  if (!ctx) throw new Error("useConfirmDialog must be used within ConfirmDialogProvider");
+  return ctx;
+};
+
+const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState<string | undefined>(undefined);
+  const [message, setMessage] = useState("");
+  const [onConfirm, setOnConfirm] = useState<() => void>(() => () => {});
+  const [type, setType] = useState<ConfirmDialogType>(ConfirmDialogType.DEFAULT);
+
+  const showConfirmDialog = ({ title, message, onConfirm, type }: { title?: string; message: string; onConfirm: () => void; type?: ConfirmDialogType; }) => {
+    setTitle(title);
+    setMessage(message);
+    setOnConfirm(() => () => {
+      setOpen(false);
+      onConfirm();
+    });
+    setType(type || ConfirmDialogType.DEFAULT);
+    setOpen(true);
+  };
+
+  const handleCancel = () => setOpen(false);
+
+  return (
+    <ConfirmDialogContext.Provider value={{ showConfirmDialog }}>
+      {children}
+      <ConfirmDialog open={open} title={title} message={message} onConfirm={onConfirm} onCancel={handleCancel} type={type} />
+    </ConfirmDialogContext.Provider>
+  );
+};
 
 const AppRoutes: React.FC = () => {
   const navigate = useNavigate();
@@ -81,15 +127,17 @@ const PlanDetailsWrapper: React.FC = () => {
 };
 
 const App: React.FC = () => (
-  <BrowserRouter basename="/app">
-    <Routes>
-      <Route path="/" element={<AppRoutes />} />
-      <Route path=":username" element={<AppRoutes />} />
-      <Route path="/:username" element={<AppRoutes />} />
-      <Route path=":username/plan/:planName" element={<PlanDetailsWrapper />} />
-      <Route path="/:username/plan/:planName" element={<PlanDetailsWrapper />} />
-    </Routes>
-  </BrowserRouter>
+  <ConfirmDialogProvider>
+    <BrowserRouter basename="/app">
+      <Routes>
+        <Route path="/" element={<AppRoutes />} />
+        <Route path=":username" element={<AppRoutes />} />
+        <Route path="/:username" element={<AppRoutes />} />
+        <Route path=":username/plan/:planName" element={<PlanDetailsWrapper />} />
+        <Route path="/:username/plan/:planName" element={<PlanDetailsWrapper />} />
+      </Routes>
+    </BrowserRouter>
+  </ConfirmDialogProvider>
 );
 
 export default App;

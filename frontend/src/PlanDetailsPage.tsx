@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./PlanDetailsPage.css";
-import { fetchPlan, updatePlan, clonePlan } from "./api";
+import { fetchPlan, updatePlan, clonePlan, deletePlan } from "./api";
+import { useConfirmDialog } from "./App";
+import { ConfirmDialogType } from "./ConfirmDialog";
 import type { PlanDto } from "./types";
 import PlanStageEditor from "./PlanStageEditor";
 import { calculatePlanResources } from "./planResourceUtils";
@@ -17,6 +19,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
   const [plan, setPlan] = useState<PlanDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { showConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     setLoading(true);
@@ -76,9 +79,20 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
   };
 
   const handleDelete = () => {
-    // TODO: Implement delete logic
     setMenuOpen(false);
-    alert("Delete plan (not implemented)");
+    showConfirmDialog({
+      title: "Delete Plan",
+      message: `Are you sure you want to delete the plan '${planName}'? This action cannot be undone!`,
+      type: ConfirmDialogType.DANGER,
+      onConfirm: async () => {
+        try {
+          await deletePlan(username, planName);
+          onBack();
+        } catch (e: any) {
+          setError(e?.response?.data?.message || "Failed to delete plan");
+        }
+      }
+    });
   };
 
   // Calculate final resources and validity for the whole plan

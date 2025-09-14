@@ -74,6 +74,87 @@ body {
   background: #404eed;
 }
 
+/* Modal dialog overlay and dialog styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-dialog {
+  background: #23272a;
+  color: #f1f1f1;
+  border-radius: 10px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+  padding: 2em 2.5em 1.5em 2.5em;
+  min-width: 320px;
+  max-width: 90vw;
+  text-align: center;
+  position: relative;
+  z-index: 10001;
+}
+
+.modal-title {
+  font-size: 1.3em;
+  margin-bottom: 1em;
+  color: #ffd700;
+}
+
+.modal-title-danger {
+  color: #ff3333;
+}
+
+.modal-message {
+  margin-bottom: 1.5em;
+  font-size: 1.1em;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5em;
+}
+
+.modal-btn {
+  padding: 0.7em 2em;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+
+.modal-btn-cancel {
+  background: #444;
+  color: #fff;
+}
+
+.modal-btn-cancel:hover {
+  background: #666;
+}
+
+.modal-btn-confirm {
+  background: #ff3333;
+  color: #fff;
+}
+
+.modal-btn-confirm:hover {
+  background: #d44;
+}
+
+/* Prevent background scrolling when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
 @media (max-width: 500px) {
   .login-container {
     width: 98vw;

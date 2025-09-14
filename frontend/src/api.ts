@@ -46,3 +46,7 @@ export async function clonePlan(username: string, originalPlanName: string): Pro
   );
   return res.data;
 }
+
+export async function deletePlan(username: string, planName: string): Promise<void> {
+  await axios.delete(`${USERS_ENDPOINT}/${encodeURIComponent(username)}/${PLANS_SUB_PATH}/${encodeURIComponent(planName)}`);
+}
