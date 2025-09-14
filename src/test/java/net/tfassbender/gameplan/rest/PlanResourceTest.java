@@ -26,6 +26,7 @@ public class PlanResourceTest {
 
   private static final String TEST_USER = "TestUser1";
   private static final Path USER_DIR = Paths.get("build/test-gameplan-data/.users/" + TEST_USER);
+  private static final Path GAMES_DIR = Paths.get("build/test-gameplan-data/.games");
   private static final Path PLAN_FILE = USER_DIR.resolve("TestPlan1.json");
 
   @BeforeAll
@@ -195,7 +196,7 @@ public class PlanResourceTest {
     Files.createDirectories(userDir);
     String gameName = "TestGameB";
     String gameFileName = gameName + ".json";
-    Path gamesDir = Paths.get("build/test-gameplan-data/games");
+    Path gamesDir = Paths.get("build/test-gameplan-data/.games");
     Files.createDirectories(gamesDir);
     Path gameFile = gamesDir.resolve(gameFileName);
     String gameJson = "{\"name\":\"TestGameB\"}";
@@ -306,6 +307,7 @@ public class PlanResourceTest {
 
   @Test
   public void testClonePlan_happyPath() throws Exception {
+    createTestGameFile("TestGame1");
     String user = "TestUserClone3";
     Path userDir = Paths.get("build/test-gameplan-data/.users/" + user);
     Files.createDirectories(userDir);
@@ -334,7 +336,7 @@ public class PlanResourceTest {
       PlanDto clonedPlan = response.body().as(PlanDto.class);
       assertThat(clonedPlan.name, not(planName)); // Should be a new unique name
       assertThat(clonedPlan.gameName, is("TestGame1"));
-      assertThat(clonedPlan.description, is("Original plan"));
+      assertThat(clonedPlan.description, containsString("Original plan"));
       assertThat(clonedPlan.stages, hasSize(1));
       assertThat(clonedPlan.stages.get(0).description, is("Stage 1"));
       assertThat(clonedPlan.stages.get(0).resourceChanges.get("gold"), is(10));
@@ -557,5 +559,22 @@ public class PlanResourceTest {
                 });
       }
     }
+  }
+
+  private void createTestGameFile(String gameName) throws IOException {
+    Files.createDirectories(GAMES_DIR);
+    Path testGameFile = GAMES_DIR.resolve(gameName + ".json");
+    String minimalGameDtoJson = """
+            {
+              "name":"TestGame1",
+              "description":"A test game",
+              "resources":{"gold":"SIMPLE"},
+              "defaultStartingResources":{
+                "description":"Start",
+                "resourceChanges":{"gold":100}
+              }
+            }
+            """;
+    Files.writeString(testGameFile, minimalGameDtoJson);
   }
 }

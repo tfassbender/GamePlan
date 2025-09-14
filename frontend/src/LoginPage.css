@@ -59,3 +59,16 @@
   text-align: center;
   font-size: 15px;
 }
+
+.login-version-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  text-align: center;
+  font-size: 0.85em;
+  color: #aaa;
+  font-family: 'Orbitron', Arial, sans-serif;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}

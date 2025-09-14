@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getGames, getPlans, createPlan, deletePlan } from "./api";
+import { getGames, getPlans, createPlan, deletePlan, getVersion } from "./api";
 import { useConfirmDialog } from "./App";
 import { ConfirmDialogType } from "./ConfirmDialog";
 import "./DashboardPage.css";
@@ -16,6 +16,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
   const [selectedGame, setSelectedGame] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [version, setVersion] = useState<string>("");
   const navigate = useNavigate();
   const { showConfirmDialog } = useConfirmDialog();
 
@@ -32,6 +33,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
       })
       .catch(e => setError(e?.response?.data?.message || "Failed to load data"))
       .finally(() => setLoading(false));
+  }, [username]);
+
+  useEffect(() => {
+    getVersion().then(setVersion).catch(() => setVersion(""));
   }, [username]);
 
   const handleCreatePlan = async () => {
@@ -83,8 +88,12 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
 
   return (
     <div className="dashboard-container">
+      <div className="dashboard-brand-header">
+        <img src="icons/logo.png" alt="GamePlan Logo" className="dashboard-logo" />
+        <span className="dashboard-headline">GamePlan</span>
+      </div>
       <div className="dashboard-header">
-        <span>Logged in as <b>{username}</b></span>
+        <span className="dashboard-username">Logged in as: <b>{username}</b></span>
         <button className="logout-btn" onClick={onLogout}>Logout</button>
       </div>
       {error && <div className="dashboard-error">{error}</div>}
@@ -133,6 +142,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
           </div>
         </>
       )}
+      <div className="dashboard-version-info">{version && `Version: ${version}`}</div>
     </div>
   );
 };

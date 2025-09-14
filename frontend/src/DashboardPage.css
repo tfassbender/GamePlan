@@ -14,18 +14,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 1em;
 }
 
 .logout-btn {
-  background: #ff3333;
+  background: #00bfff;
   color: #fff;
   border: none;
   border-radius: 4px;
   padding: 6px 16px;
   margin-left: 10px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 1em;
   font-family: 'Orbitron', Arial, sans-serif;
 }
 
@@ -88,7 +88,7 @@
   border: none;
   border-radius: 4px;
   padding: 6px 18px;
-  font-size: 14px;
+  font-size: 1em;
   cursor: pointer;
   transition: background 0.2s;
   font-family: 'Orbitron', Arial, sans-serif;
@@ -130,7 +130,6 @@
 .delete-all-btn:disabled {
   background: #eee;
   color: #aaa;
-  cursor: not-allowed;
 }
 
 .dashboard-section ul {
@@ -151,4 +150,47 @@
   max-height: 55vh;
   overflow-y: auto;
   margin-bottom: 8px;
+}
+
+.dashboard-version-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  text-align: center;
+  font-size: 0.85em;
+  color: #aaa;
+  font-family: 'Orbitron', Arial, sans-serif;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+
+.dashboard-brand-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2em;
+  gap: 12px;
+}
+
+.dashboard-logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 6px;
+}
+
+.dashboard-headline {
+  font-size: 2rem;
+  font-family: 'Orbitron', Arial, sans-serif;
+  color: #f1f1f1;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.dashboard-username {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
 }

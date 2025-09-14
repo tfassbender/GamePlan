@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LoginPage.css";
+import { getVersion } from "./api";
 
 interface LoginPageProps {
   onLogin: (username: string) => void | Promise<void>;
@@ -10,6 +11,11 @@ interface LoginPageProps {
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp, error, loading }) => {
   const [username, setUsername] = useState("");
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    getVersion().then(setVersion).catch(() => setVersion(""));
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
@@ -27,6 +33,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp, error, loading
     }
   };
 
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleLogin();
+    }
+  };
+
   return (
     <div className="login-container">
       <header className="login-header">
@@ -40,6 +52,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp, error, loading
         placeholder="Enter username"
         value={username}
         onChange={handleInputChange}
+        onKeyDown={handleInputKeyDown}
         className="login-input"
         autoFocus
         disabled={loading}
@@ -49,6 +62,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp, error, loading
         <button onClick={handleSignUp} disabled={loading}>Sign Up</button>
       </div>
       {loading && <div className="login-loading">Loading...</div>}
+      <div className="login-version-info">{version && `Version: ${version}`}</div>
     </div>
   );
 };

@@ -50,3 +50,10 @@ export async function clonePlan(username: string, originalPlanName: string): Pro
 export async function deletePlan(username: string, planName: string): Promise<void> {
   await axios.delete(`${USERS_ENDPOINT}/${encodeURIComponent(username)}/${PLANS_SUB_PATH}/${encodeURIComponent(planName)}`);
 }
+
+export async function getVersion(): Promise<string> {
+  const res = await fetch('/version');
+  if (!res.ok) throw new Error('Failed to fetch version');
+  const data = await res.json();
+  return data.version;
+}

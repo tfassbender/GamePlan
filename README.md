@@ -8,7 +8,7 @@ changes over time.
 
 ## 🚧 Project Status
 
-GamePlan is currently in development. The backend is functional. The frontend is in progress.
+GamePlan is currently in development. An MVP is functional, but some features are still being planed or implemented.
 
 ## ✨ Planned Features
 

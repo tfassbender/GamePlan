@@ -21,7 +21,7 @@ public class GameResourceTest {
 
   private static final Logger log = LoggerFactory.getLogger(GameResourceTest.class);
 
-  private static final Path GAMES_DIR = Paths.get("build/test-gameplan-data/games");
+  private static final Path GAMES_DIR = Paths.get("build/test-gameplan-data/.games");
 
   @Test
   public void testGetGames_returnsEmptyList() {

@@ -69,6 +69,7 @@ public class PlanFileService implements PlanService {
     newPlan.resourceTypes.putAll(game.resources);
     PlanStageDto initialStage = new PlanStageDto();
     initialStage.resourceChanges.putAll(game.defaultStartingResources.resourceChanges);
+    initialStage.description = game.defaultStartingResources.description;
     newPlan.stages.add(initialStage);
 
     ObjectMapper mapper = new ObjectMapper();
