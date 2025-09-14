@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getGames, getPlans, createPlan } from "./api";
+import { getGames, getPlans, createPlan, deletePlan } from "./api";
+import { useConfirmDialog } from "./App";
+import { ConfirmDialogType } from "./ConfirmDialog";
 import "./DashboardPage.css";
 
 interface DashboardPageProps {
@@ -15,6 +17,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { showConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     setLoading(true);
@@ -36,14 +39,46 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
     setLoading(true);
     setError(null);
     try {
-      await createPlan(username, selectedGame);
-      const updatedPlans = await getPlans(username);
-      setPlans(updatedPlans);
+      const newPlan = await createPlan(username, selectedGame);
+      const planName = newPlan.name || newPlan.planName || newPlan.id || (typeof newPlan === 'string' ? newPlan : undefined);
+      if (planName) {
+        if ((window as any).appNavigate) {
+          (window as any).appNavigate(`/app/${username}/plan/${encodeURIComponent(planName)}`);
+        } else {
+          window.location.href = `/app/${username}/plan/${encodeURIComponent(planName)}`;
+        }
+      } else {
+        // fallback: just refresh plans list
+        const updatedPlans = await getPlans(username);
+        setPlans(updatedPlans);
+      }
     } catch (e: any) {
       setError(e?.response?.data?.message || "Failed to create plan");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteAll = () => {
+    showConfirmDialog({
+      title: "Delete All Plans",
+      message: "Are you sure you want to delete ALL your plans? This action cannot be undone!",
+      type: ConfirmDialogType.DANGER,
+      onConfirm: async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          for (const planName of plans) {
+            await deletePlan(username, planName);
+          }
+          setPlans([]);
+        } catch (e: any) {
+          setError(e?.response?.data?.message || "Failed to delete all plans");
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
   };
 
   return (
@@ -71,7 +106,12 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
             </div>
           </div>
           <div className="dashboard-section">
-            <h2>Your Plans</h2>
+            <div className="dashboard-plans-header">
+              <h2 style={{ margin: 0 }}>Your Plans</h2>
+              <button className="delete-all-btn" onClick={handleDeleteAll} disabled={plans.length === 0 || loading}>
+                Delete All
+              </button>
+            </div>
             {plans.length === 0 ? (
               <div>No plans yet.</div>
             ) : (
