@@ -60,6 +60,38 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     setMenuOpen(false);
   };
 
+  const handleAddStageBefore = (idx: number) => {
+    if (!plan) return;
+    const newStage = {
+      description: "",
+      resourceChanges: Object.fromEntries(Object.keys(plan.resourceTypes).map(r => [r, 0]))
+    };
+    setPlan({
+      ...plan,
+      stages: [
+        ...plan.stages.slice(0, idx),
+        newStage,
+        ...plan.stages.slice(idx)
+      ]
+    });
+  };
+
+  const handleAddStageAfter = (idx: number) => {
+    if (!plan) return;
+    const newStage = {
+      description: "",
+      resourceChanges: Object.fromEntries(Object.keys(plan.resourceTypes).map(r => [r, 0]))
+    };
+    setPlan({
+      ...plan,
+      stages: [
+        ...plan.stages.slice(0, idx + 1),
+        newStage,
+        ...plan.stages.slice(idx + 1)
+      ]
+    });
+  };
+
   const navigate = (window as any).appNavigate || ((url: string) => { window.location.href = url; });
 
   const handleClone = async () => {
@@ -149,6 +181,14 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                     onChange={updatedStage => {
                       const newStages = plan.stages.map((s, i) => i === idx ? updatedStage : s);
                       setPlan({ ...plan, stages: newStages });
+                    }}
+                    onAddBefore={() => handleAddStageBefore(idx)}
+                    onAddAfter={() => handleAddStageAfter(idx)}
+                    onDelete={() => {
+                      setPlan({
+                        ...plan,
+                        stages: plan.stages.filter((_, i) => i !== idx)
+                      });
                     }}
                   />
                 );
