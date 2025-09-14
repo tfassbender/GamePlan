@@ -2,7 +2,10 @@ package net.tfassbender.gameplan.persistence.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import net.tfassbender.gameplan.dto.GameDto;
 import net.tfassbender.gameplan.dto.PlanDto;
+import net.tfassbender.gameplan.dto.PlanStageDto;
 import net.tfassbender.gameplan.exception.GamePlanPersistenceException;
 import net.tfassbender.gameplan.exception.GamePlanResourceNotFoundException;
 import net.tfassbender.gameplan.persistence.PlanService;
@@ -30,6 +33,9 @@ public class PlanFileService implements PlanService {
   @ConfigProperty(name = "game_plan.path")
   private String gamePlanPath;
 
+  @Inject
+  private GameFileService gameFileService;
+
   public List<String> getPlanNames(String username) throws GamePlanPersistenceException {
     FileUtil.checkResourceNameValid(username);
 
@@ -49,12 +55,21 @@ public class PlanFileService implements PlanService {
     FileUtil.checkResourceNameValid(username);
     FileUtil.checkResourceNameValid(gameName);
 
+    GameDto game = gameFileService.getGame(gameName);
+    if (game == null) {
+      throw new GamePlanResourceNotFoundException("Game '" + gameName + "' does not exist.");
+    }
+
     Path planFilePath = createPlanFile(username, gameName);
 
     PlanDto newPlan = new PlanDto();
     newPlan.name = getUniquePlanName(username, gameName);
     newPlan.gameName = gameName;
     newPlan.lastModified = getCurrentTimestampAsString();
+    newPlan.resourceTypes.putAll(game.resources);
+    PlanStageDto initialStage = new PlanStageDto();
+    initialStage.resourceChanges.putAll(game.defaultStartingResources.resourceChanges);
+    newPlan.stages.add(initialStage);
 
     ObjectMapper mapper = new ObjectMapper();
     try {
@@ -113,7 +128,7 @@ public class PlanFileService implements PlanService {
   public void deletePlan(String username, String planName) throws GamePlanPersistenceException {
     FileUtil.checkResourceNameValid(username);
     FileUtil.checkResourceNameValid(planName);
-    
+
     Pair<PlanDto, Path> plan = findPlanDtoAndPathByName(username, planName);
 
     try {

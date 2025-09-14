@@ -1,6 +1,6 @@
 import React from "react";
-import type { PlanStageDto } from "./types";
 import "./PlanStageEditor.css";
+import type { PlanStageDto, ResourceType } from "./types";
 import ResourceInput from "./ResourceInput";
 import "./ResourceInput.css";
 import { calculatePlanResources } from "./planResourceUtils";
@@ -10,9 +10,10 @@ interface PlanStageEditorProps {
   stage: PlanStageDto;
   onChange: (stage: PlanStageDto) => void;
   currentResources?: Record<string, number>; // for future use
+  resourceTypes: Record<string, ResourceType>;
 }
 
-const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChange, currentResources }) => {
+const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChange, currentResources, resourceTypes }) => {
   // Calculate resources after this stage
   const stagesUpToCurrent = React.useMemo(() => [stage], [stage]);
   // If currentResources is provided, use it as the starting point; otherwise, use zeroes
@@ -22,7 +23,7 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
     currentResources || {}
   );
   return (
-    <div className="plan-stage-editor">
+    <div className="plan-stage-editor plan-stage-editor-debug">
       <div className="plan-stage-header">
         <span className="plan-stage-number">{index + 1}</span>
         <textarea
@@ -34,11 +35,11 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
         />
       </div>
       <div className="plan-stage-resources">
-        {Object.entries(stage.resourceChanges).map(([resource, value]) => (
+        {Object.keys(resourceTypes).map(resource => (
           <ResourceInput
             key={resource}
             resource={resource}
-            value={value}
+            value={stage.resourceChanges[resource] ?? 0}
             onChange={newValue => {
               const updatedResourceChanges = { ...stage.resourceChanges, [resource]: newValue };
               onChange({ ...stage, resourceChanges: updatedResourceChanges });
@@ -53,9 +54,9 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
           &#931;
         </span>
         <span className="plan-details-resources-text">
-          {Object.entries(finalResources).map(([resource, value]) => (
+          {Object.keys(resourceTypes).map(resource => (
             <span key={resource} style={{ marginRight: "1em" }}>
-              {resource}: {value}
+              {resource}: {finalResources[resource] ?? 0}
             </span>
           ))}
         </span>

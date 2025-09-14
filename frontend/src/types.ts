@@ -8,5 +8,11 @@ export interface PlanDto {
   gameName: string;
   description: string;
   lastModified: string;
+  resourceTypes: Record<string, ResourceType>;
   stages: PlanStageDto[];
+}
+
+export enum ResourceType {
+  SIMPLE = "SIMPLE"
+  // Add more types as needed
 }

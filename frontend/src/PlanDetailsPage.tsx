@@ -114,6 +114,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                     index={idx}
                     stage={stage}
                     currentResources={resourcesBeforeStage}
+                    resourceTypes={plan.resourceTypes}
                     onChange={updatedStage => {
                       const newStages = plan.stages.map((s, i) => i === idx ? updatedStage : s);
                       setPlan({ ...plan, stages: newStages });
@@ -132,9 +133,9 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
           &#931;
         </span>
         <span className="plan-details-resources-text">
-          {Object.entries(finalResourceResult.finalResources).map(([resource, value]) => (
+          {plan && Object.keys(plan.resourceTypes).map(resource => (
             <span key={resource} style={{ marginRight: "1em" }}>
-              {resource}: {value}
+              {resource}: {finalResourceResult.finalResources[resource] ?? 0}
             </span>
           ))}
         </span>
