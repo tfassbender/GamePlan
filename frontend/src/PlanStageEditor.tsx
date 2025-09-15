@@ -15,9 +15,10 @@ interface PlanStageEditorProps {
   onAddBefore?: () => void;
   onAddAfter?: () => void;
   onDelete?: () => void;
+  dragHandleProps?: React.HTMLAttributes<HTMLSpanElement>;
 }
 
-const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChange, currentResources, resourceTypes, onAddBefore, onAddAfter, onDelete }) => {
+const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChange, currentResources, resourceTypes, onAddBefore, onAddAfter, onDelete, dragHandleProps }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [menuPosition, setMenuPosition] = React.useState<{top: number, left: number} | null>(null);
   const menuBtnRef = React.useRef<HTMLButtonElement>(null);
@@ -62,7 +63,9 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
   return (
     <div className="plan-stage-editor plan-stage-editor-debug">
       <div className="plan-stage-header">
-        <span className="plan-stage-number">{index + 1}</span>
+        <span className="plan-stage-number" {...(dragHandleProps || {})} style={{ cursor: dragHandleProps ? 'grab' : undefined }}>
+          {index + 1}
+        </span>
         <textarea
           className="plan-stage-description"
           value={stage.description}

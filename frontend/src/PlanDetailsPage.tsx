@@ -6,6 +6,8 @@ import { ConfirmDialogType } from "./ConfirmDialog";
 import type { PlanDto } from "./types";
 import PlanStageEditor from "./PlanStageEditor";
 import { calculatePlanResources } from "./planResourceUtils";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from "@dnd-kit/sortable";
 
 interface PlanDetailsPageProps {
   username: string;
@@ -130,6 +132,29 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
   // Calculate final resources and validity for the whole plan
   const finalResourceResult = plan ? calculatePlanResources(plan.stages, true) : { finalResources: {}, isValid: true };
 
+  // Helper for dnd-kit sortable
+  function SortableStage({ id, idx, stage, ...rest }: any) {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+    return (
+      <div
+        ref={setNodeRef}
+        style={{
+          transform: transform ? `translateY(${transform.y}px)` : undefined,
+          transition,
+          opacity: isDragging ? 0.5 : 1,
+          zIndex: isDragging ? 1000 : undefined,
+        }}
+      >
+        <PlanStageEditor
+          index={idx}
+          stage={stage}
+          dragHandleProps={{ ...attributes, ...listeners }}
+          {...rest}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="plan-details-container">
       <div className="plan-details-header">
@@ -164,35 +189,55 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                 className="plan-details-description-textarea"
               />
             </div>
-            {/* Render stages or other plan details here */}
             <div className="plan-details-stages-list">
-              {plan.stages.map((stage, idx) => {
-                // Calculate resources before this stage
-                const resourcesBeforeStage = idx === 0
-                  ? {} // start with zeroes
-                  : calculatePlanResources(plan.stages.slice(0, idx), false).finalResources;
-                return (
-                  <PlanStageEditor
-                    key={idx}
-                    index={idx}
-                    stage={stage}
-                    currentResources={resourcesBeforeStage}
-                    resourceTypes={plan.resourceTypes}
-                    onChange={updatedStage => {
-                      const newStages = plan.stages.map((s, i) => i === idx ? updatedStage : s);
+              <DndContext
+                collisionDetection={closestCenter}
+                onDragEnd={event => {
+                  const { active, over } = event;
+                  if (active.id !== over?.id) {
+                    const oldIndex = plan.stages.findIndex((_, i) => i.toString() === active.id);
+                    const newIndex = plan.stages.findIndex((_, i) => i.toString() === over?.id);
+                    if (oldIndex !== -1 && newIndex !== -1) {
+                      const newStages = arrayMove(plan.stages, oldIndex, newIndex);
                       setPlan({ ...plan, stages: newStages });
-                    }}
-                    onAddBefore={() => handleAddStageBefore(idx)}
-                    onAddAfter={() => handleAddStageAfter(idx)}
-                    onDelete={() => {
-                      setPlan({
-                        ...plan,
-                        stages: plan.stages.filter((_, i) => i !== idx)
-                      });
-                    }}
-                  />
-                );
-              })}
+                    }
+                  }
+                }}
+              >
+                <SortableContext
+                  items={plan.stages.map((_, i) => i.toString())}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {plan.stages.map((stage, idx) => {
+                    // Calculate resources before this stage
+                    const resourcesBeforeStage = idx === 0
+                      ? {} // start with zeroes
+                      : calculatePlanResources(plan.stages.slice(0, idx), false).finalResources;
+                    return (
+                      <SortableStage
+                        key={idx}
+                        id={idx.toString()}
+                        idx={idx}
+                        stage={stage}
+                        currentResources={resourcesBeforeStage}
+                        resourceTypes={plan.resourceTypes}
+                        onChange={(updatedStage: any) => {
+                          const newStages = plan.stages.map((s, i) => i === idx ? updatedStage : s);
+                          setPlan({ ...plan, stages: newStages });
+                        }}
+                        onAddBefore={() => handleAddStageBefore(idx)}
+                        onAddAfter={() => handleAddStageAfter(idx)}
+                        onDelete={() => {
+                          setPlan({
+                            ...plan,
+                            stages: plan.stages.filter((_, i) => i !== idx)
+                          });
+                        }}
+                      />
+                    );
+                  })}
+                </SortableContext>
+              </DndContext>
             </div>
           </div>
         )}
