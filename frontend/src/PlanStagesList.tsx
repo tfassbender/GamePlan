@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PlanStageEditor from "./PlanStageEditor";
 import type { PlanStageDto, ResourceType } from "./types";
+import { calculatePlanResources } from "./planResourceUtils";
 
 interface PlanStagesListProps {
   initialStages: PlanStageDto[];
@@ -29,19 +30,27 @@ const PlanStagesList: React.FC<PlanStagesListProps> = ({ initialStages, resource
 
   return (
     <div>
-      {stages.map((stage, idx) => (
-        <PlanStageEditor
-          key={idx}
-          index={idx}
-          stage={stage}
-          onChange={updated => handleStageChange(idx, updated)}
-          resourceTypes={resourceTypes}
-          onAddBefore={() => handleAddBefore(idx)}
-        />
-      ))}
+      {stages.map((stage, idx) => {
+        // Calculate cumulative resources up to previous stage
+        const { finalResources } = calculatePlanResources(
+          stages.slice(0, idx),
+          false,
+          {}
+        );
+        return (
+          <PlanStageEditor
+            key={idx}
+            index={idx}
+            stage={stage}
+            onChange={updated => handleStageChange(idx, updated)}
+            resourceTypes={resourceTypes}
+            onAddBefore={() => handleAddBefore(idx)}
+            currentResources={finalResources}
+          />
+        );
+      })}
     </div>
   );
 };
 
 export default PlanStagesList;
-

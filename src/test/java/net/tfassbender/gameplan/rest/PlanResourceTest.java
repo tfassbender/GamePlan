@@ -4,6 +4,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import net.tfassbender.gameplan.dto.PlanCloneDto;
 import net.tfassbender.gameplan.dto.PlanDto;
+import net.tfassbender.gameplan.dto.PowerResourceChange;
+import net.tfassbender.gameplan.dto.SimpleResourceChange;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -102,11 +104,11 @@ public class PlanResourceTest {
               "stages": [
                 {
                   "description": "Stage 1",
-                  "resourceChanges": {"gold": 10, "wood": 5}
+                  "resourceChanges": {"gold": {"type": "simple", "value": 10}, "wood": {"type": "simple", "value": 5}}
                 },
                 {
                   "description": "Stage 2",
-                  "resourceChanges": {"gold": 20, "wood": 0}
+                  "resourceChanges": {"gold": {"type": "simple", "value": 20}, "wood": {"type": "simple", "value": 0}}
                 }
               ]
             }
@@ -123,11 +125,14 @@ public class PlanResourceTest {
       assertThat(planDto.description, is("A test plan"));
       assertThat(planDto.stages, hasSize(2));
       assertThat(planDto.stages.get(0).description, is("Stage 1"));
-      assertThat(planDto.stages.get(0).resourceChanges.get("gold"), is(10));
-      assertThat(planDto.stages.get(0).resourceChanges.get("wood"), is(5));
-      assertThat(planDto.stages.get(1).description, is("Stage 2"));
-      assertThat(planDto.stages.get(1).resourceChanges.get("gold"), is(20));
-      assertThat(planDto.stages.get(1).resourceChanges.get("wood"), is(0));
+      assertThat(planDto.stages.get(0).resourceChanges.get("gold"), instanceOf(SimpleResourceChange.class));
+      assertThat(((SimpleResourceChange) planDto.stages.get(0).resourceChanges.get("gold")).value(), is(10));
+      assertThat(planDto.stages.get(0).resourceChanges.get("wood"), instanceOf(SimpleResourceChange.class));
+      assertThat(((SimpleResourceChange) planDto.stages.get(0).resourceChanges.get("wood")).value(), is(5));
+      assertThat(planDto.stages.get(1).resourceChanges.get("gold"), instanceOf(SimpleResourceChange.class));
+      assertThat(((SimpleResourceChange) planDto.stages.get(1).resourceChanges.get("gold")).value(), is(20));
+      assertThat(planDto.stages.get(1).resourceChanges.get("wood"), instanceOf(SimpleResourceChange.class));
+      assertThat(((SimpleResourceChange) planDto.stages.get(1).resourceChanges.get("wood")).value(), is(0));
     }
     finally {
       Files.deleteIfExists(planFile);
@@ -155,7 +160,7 @@ public class PlanResourceTest {
   public void testCreatePlan_userDoesNotExist_gameExists() throws Exception {
     String gameName = "TestGameA";
     String gameFileName = gameName + ".json";
-    Path gamesDir = Paths.get("build/test-gameplan-data/games");
+    Path gamesDir = Paths.get("build/test-gameplan-data/.games");
     Files.createDirectories(gamesDir);
     Path gameFile = gamesDir.resolve(gameFileName);
     String gameJson = "{\"name\":\"TestGameA\"}";
@@ -319,7 +324,7 @@ public class PlanResourceTest {
               "gameName": "TestGame1",
               "description": "Original plan",
               "stages": [
-                { "description": "Stage 1", "resourceChanges": {"gold": 10} }
+                { "description": "Stage 1", "resourceChanges": {"gold": {"type": "simple", "value": 10}} }
               ]
             }
             """;
@@ -339,7 +344,8 @@ public class PlanResourceTest {
       assertThat(clonedPlan.description, containsString("Original plan"));
       assertThat(clonedPlan.stages, hasSize(1));
       assertThat(clonedPlan.stages.get(0).description, is("Stage 1"));
-      assertThat(clonedPlan.stages.get(0).resourceChanges.get("gold"), is(10));
+      assertThat(clonedPlan.stages.get(0).resourceChanges.get("gold"), instanceOf(SimpleResourceChange.class));
+      assertThat(((SimpleResourceChange) clonedPlan.stages.get(0).resourceChanges.get("gold")).value(), is(10));
     }
     finally {
       Files.deleteIfExists(planFile);
@@ -438,7 +444,7 @@ public class PlanResourceTest {
     planDto.stages = new java.util.ArrayList<>();
     net.tfassbender.gameplan.dto.PlanStageDto stage = new net.tfassbender.gameplan.dto.PlanStageDto();
     stage.description = "New Stage";
-    stage.resourceChanges.put("gold", 99);
+    stage.resourceChanges.put("gold", new SimpleResourceChange(99));
     planDto.stages.add(stage);
     try {
       var response = RestAssured.given() //
@@ -452,7 +458,8 @@ public class PlanResourceTest {
       assertThat(updatedPlan.description, is("Updated description"));
       assertThat(updatedPlan.stages, hasSize(1));
       assertThat(updatedPlan.stages.get(0).description, is("New Stage"));
-      assertThat(updatedPlan.stages.get(0).resourceChanges.get("gold"), is(99));
+      assertThat(updatedPlan.stages.get(0).resourceChanges.get("gold"), instanceOf(SimpleResourceChange.class));
+      assertThat(((SimpleResourceChange) updatedPlan.stages.get(0).resourceChanges.get("gold")).value(), is(99));
       // Check file content
       String updatedFileContent = Files.readString(planFile);
       assertThat(updatedFileContent, containsString("Updated description"));
@@ -545,6 +552,43 @@ public class PlanResourceTest {
     }
   }
 
+  @Test
+  public void testGetPlan_withPowerResourceChange() throws Exception {
+    String planName = "TestPlanPower";
+    Path planFile = USER_DIR.resolve(planName + ".json");
+    String planJson = """
+            {
+              "name": "TestPlanPower",
+              "gameName": "TestGame1",
+              "description": "A test plan with power",
+              "stages": [
+                {
+                  "description": "Stage 1",
+                  "resourceChanges": {"TM_POWER": {"type": "tm_power", "bowl1": 1, "bowl2": 2, "bowl3": 3}}
+                }
+              ]
+            }
+            """;
+    Files.writeString(planFile, planJson);
+    try {
+      var response = RestAssured.given() //
+              .header("Accept", "application/json") //
+              .when().get("/users/" + TEST_USER + "/plans/" + planName) //
+              .then().statusCode(200).extract();
+      PlanDto planDto = response.body().as(PlanDto.class);
+      assertThat(planDto.name, is(planName));
+      assertThat(planDto.stages, hasSize(1));
+      assertThat(planDto.stages.get(0).resourceChanges.get("TM_POWER"), instanceOf(PowerResourceChange.class));
+      PowerResourceChange power = (PowerResourceChange) planDto.stages.get(0).resourceChanges.get("TM_POWER");
+      assertThat(power.bowl1(), is(1));
+      assertThat(power.bowl2(), is(2));
+      assertThat(power.bowl3(), is(3));
+    }
+    finally {
+      Files.deleteIfExists(planFile);
+    }
+  }
+
   private void deleteDirectoryRecursively(Path dir) throws IOException {
     if (Files.exists(dir)) {
       try (var files = Files.walk(dir)) {
@@ -571,7 +615,7 @@ public class PlanResourceTest {
               "resources":{"gold":"SIMPLE"},
               "defaultStartingResources":{
                 "description":"Start",
-                "resourceChanges":{"gold":100}
+                "resourceChanges":{"gold":{ "type": "simple", "value":100 }}
               }
             }
             """;

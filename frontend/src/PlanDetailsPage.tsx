@@ -3,7 +3,7 @@ import "./PlanDetailsPage.css";
 import { fetchPlan, updatePlan, clonePlan, deletePlan } from "./api";
 import { useConfirmDialog } from "./App";
 import { ConfirmDialogType } from "./ConfirmDialog";
-import type { PlanDto } from "./types";
+import { PlanDto, ResourceType, ResourceChangeValue } from "./types";
 import PlanStageEditor from "./PlanStageEditor";
 import { calculatePlanResources } from "./planResourceUtils";
 import { DndContext, closestCenter } from "@dnd-kit/core";
@@ -51,12 +51,20 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     return () => clearTimeout(handler);
   }, [plan?.description, plan?.stages]);
 
+  const createEmptyResourceChange = (type: ResourceType): ResourceChangeValue => {
+    if (type === ResourceType.TM_POWER) {
+      return { type: "tm_power", bowl1: 0, bowl2: 0, bowl3: 0 };
+    }
+    return { type: "simple", value: 0 };
+  };
+
   const handleAddStage = () => {
     if (!plan) return;
-    // Create a new stage with all resource types set to 0
     const newStage = {
       description: "",
-      resourceChanges: Object.fromEntries(Object.keys(plan.resourceTypes).map(r => [r, 0]))
+      resourceChanges: Object.fromEntries(
+        Object.entries(plan.resourceTypes).map(([r, t]) => [r, createEmptyResourceChange(t)])
+      )
     };
     setPlan({ ...plan, stages: [...plan.stages, newStage] });
     setMenuOpen(false);
@@ -66,7 +74,9 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     if (!plan) return;
     const newStage = {
       description: "",
-      resourceChanges: Object.fromEntries(Object.keys(plan.resourceTypes).map(r => [r, 0]))
+      resourceChanges: Object.fromEntries(
+        Object.entries(plan.resourceTypes).map(([r, t]) => [r, createEmptyResourceChange(t)])
+      )
     };
     setPlan({
       ...plan,
@@ -82,7 +92,9 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     if (!plan) return;
     const newStage = {
       description: "",
-      resourceChanges: Object.fromEntries(Object.keys(plan.resourceTypes).map(r => [r, 0]))
+      resourceChanges: Object.fromEntries(
+        Object.entries(plan.resourceTypes).map(([r, t]) => [r, createEmptyResourceChange(t)])
+      )
     };
     setPlan({
       ...plan,
@@ -249,11 +261,22 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
           &#931;
         </span>
         <span className="plan-details-resources-text">
-          {plan && Object.keys(plan.resourceTypes).map(resource => (
-            <span key={resource} style={{ marginRight: "1em" }}>
-              {resource}: {finalResourceResult.finalResources[resource] ?? 0}
-            </span>
-          ))}
+          {plan && Object.keys(plan.resourceTypes).map(resource => {
+            const res = finalResourceResult.finalResources[resource];
+            let displayValue: string | number = 0;
+            if (res && typeof res === "object" && "type" in res) {
+              if (res.type === "simple") {
+                displayValue = res.value;
+              } else if (res.type === "tm_power") {
+                displayValue = `${res.bowl1}-${res.bowl2}-${res.bowl3}`;
+              }
+            }
+            return (
+              <span key={resource} style={{ marginRight: "1em" }}>
+                {resource}: {displayValue}
+              </span>
+            );
+          })}
         </span>
       </div>
     </div>

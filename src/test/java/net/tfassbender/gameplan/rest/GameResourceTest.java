@@ -3,6 +3,7 @@ package net.tfassbender.gameplan.rest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import net.tfassbender.gameplan.dto.GameDto;
+import net.tfassbender.gameplan.dto.SimpleResourceChange;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.instanceOf;
 
 @QuarkusTest
 public class GameResourceTest {
@@ -78,7 +80,7 @@ public class GameResourceTest {
               "resources":{"gold":"SIMPLE"},
               "defaultStartingResources":{
                 "description":"Start",
-                "resourceChanges":{"gold":100}
+                "resourceChanges":{"gold": {"type": "simple", "value": 100}}
               }
             }
             """;
@@ -96,7 +98,8 @@ public class GameResourceTest {
       assertThat(gameDto.resources.containsKey("gold"), is(true));
       assertThat(gameDto.resources.get("gold").toString(), is("SIMPLE"));
       assertThat(gameDto.defaultStartingResources.description, is("Start"));
-      assertThat(gameDto.defaultStartingResources.resourceChanges.get("gold"), is(100));
+      assertThat(gameDto.defaultStartingResources.resourceChanges.get("gold"), instanceOf(SimpleResourceChange.class));
+      assertThat(((SimpleResourceChange) gameDto.defaultStartingResources.resourceChanges.get("gold")).value(), is(100));
     }
     finally {
       // Cleanup: delete the test file

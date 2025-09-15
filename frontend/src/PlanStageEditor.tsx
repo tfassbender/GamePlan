@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./PlanStageEditor.css";
-import type { PlanStageDto, ResourceType } from "./types";
-import ResourceInput from "./ResourceInput";
+import { PlanStageDto, ResourceType, ResourceChangeValue, SimpleResourceChange, PowerResourceChange } from "./types";
+import ResourceInput, { ResourceInputType } from "./ResourceInput";
 import "./ResourceInput.css";
 import { calculatePlanResources } from "./planResourceUtils";
 
@@ -10,7 +10,7 @@ interface PlanStageEditorProps {
   index: number;
   stage: PlanStageDto;
   onChange: (stage: PlanStageDto) => void;
-  currentResources?: Record<string, number>; // for future use
+  currentResources?: Record<string, ResourceChangeValue>;
   resourceTypes: Record<string, ResourceType>;
   onAddBefore?: () => void;
   onAddAfter?: () => void;
@@ -108,17 +108,39 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
         document.body
       )}
       <div className="plan-stage-resources">
-        {Object.keys(resourceTypes).map(resource => (
-          <ResourceInput
-            key={resource}
-            resource={resource}
-            value={stage.resourceChanges[resource] ?? 0}
-            onChange={newValue => {
-              const updatedResourceChanges = { ...stage.resourceChanges, [resource]: newValue };
-              onChange({ ...stage, resourceChanges: updatedResourceChanges });
-            }}
-          />
-        ))}
+        {Object.keys(resourceTypes).map(resource => {
+          const resourceChange = stage.resourceChanges[resource];
+          let value: any = 0;
+          if (resourceTypes[resource] === ResourceType.TM_POWER) {
+            value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "tm_power")
+              ? resourceChange
+              : { type: "tm_power", bowl1: 0, bowl2: 0, bowl3: 0 };
+          } else {
+            value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "simple")
+              ? resourceChange.value
+              : 0;
+          }
+          const handleResourceChange = React.useCallback((newValue: any) => {
+            onChange({
+              ...stage,
+              resourceChanges: {
+                ...stage.resourceChanges,
+                [resource]: resourceTypes[resource] === ResourceType.TM_POWER
+                  ? { type: "tm_power", ...newValue }
+                  : { type: "simple", value: newValue }
+              }
+            });
+          }, [onChange, stage, resource, resourceTypes]);
+          return (
+            <ResourceInput
+              key={resource}
+              resource={resource}
+              value={value}
+              onChange={handleResourceChange}
+              type={resourceTypes[resource] === ResourceType.TM_POWER ? ResourceInputType.TM_POWER : ResourceInputType.SIMPLE}
+            />
+          );
+        })}
       </div>
       <div className="plan-stage-current-resources">
         <span
@@ -127,11 +149,22 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
           &#931;
         </span>
         <span className="plan-details-resources-text">
-          {Object.keys(resourceTypes).map(resource => (
-            <span key={resource} style={{ marginRight: "1em" }}>
-              {resource}: {finalResources[resource] ?? 0}
-            </span>
-          ))}
+          {Object.keys(resourceTypes).map(resource => {
+            const res = finalResources[resource];
+            let displayValue: string | number = 0;
+            if (res && typeof res === "object" && "type" in res) {
+              if (res.type === "simple") {
+                displayValue = res.value;
+              } else if (res.type === "tm_power") {
+                displayValue = `${res.bowl1}-${res.bowl2}-${res.bowl3}`;
+              }
+            }
+            return (
+              <span key={resource} style={{ marginRight: "1em" }}>
+                {resource}: {displayValue}
+              </span>
+            );
+          })}
         </span>
       </div>
     </div>
