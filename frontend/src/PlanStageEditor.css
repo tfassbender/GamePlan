@@ -167,3 +167,15 @@
   margin: 0;
   min-width: 200px;
 }
+
+.plan-details-resource-pair {
+  white-space: nowrap;
+  display: inline-block;
+  margin-right: 1em;
+}
+
+.plan-stage-toggle-all {
+  margin-top: 0.5em;
+  display: flex;
+  gap: 0.5em;
+}

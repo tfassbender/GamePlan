@@ -19,9 +19,24 @@ interface PlanStageEditorProps {
   dragHandleProps?: React.HTMLAttributes<HTMLSpanElement>;
   resourceInputVisibility?: Record<string, boolean>;
   toggleResourceInputVisibility?: (resource: string) => void;
+  setAllResourceInputsVisibility?: (visible: boolean) => void;
 }
 
-const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChange, currentResources, resourceTypes, resourceOrder, onAddBefore, onAddAfter, onDelete, dragHandleProps, resourceInputVisibility, toggleResourceInputVisibility }) => {
+const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
+  index,
+  stage,
+  onChange,
+  currentResources,
+  resourceTypes,
+  resourceOrder,
+  onAddBefore,
+  onAddAfter,
+  onDelete,
+  dragHandleProps,
+  resourceInputVisibility,
+  toggleResourceInputVisibility,
+  setAllResourceInputsVisibility
+}) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [menuPosition, setMenuPosition] = React.useState<{top: number, left: number} | null>(null);
   const menuBtnRef = React.useRef<HTMLButtonElement>(null);
@@ -63,6 +78,14 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
     false,
     currentResources || {}
   );
+
+  // Compute if all resource inputs are visible
+  const allVisible = resourceInputVisibility
+    ? Object.values(resourceInputVisibility).every(v => v)
+    : true;
+  const allHidden = resourceInputVisibility
+    ? Object.values(resourceInputVisibility).every(v => !v)
+    : false;
 
   return (
     <div className="plan-stage-editor plan-stage-editor-debug">
@@ -110,6 +133,16 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
           </div>
         </>,
         document.body
+      )}
+      {resourceInputVisibility && setAllResourceInputsVisibility && (
+        <div className="plan-stage-toggle-all">
+          <input
+            type="checkbox"
+            checked={allVisible}
+            onChange={e => setAllResourceInputsVisibility(e.target.checked)}
+          />
+          Show / hide all inputs
+        </div>
       )}
       <div className="plan-stage-resources">
         {(resourceOrder
@@ -168,11 +201,11 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
               if (res.type === "simple") {
                 displayValue = res.value;
               } else if (res.type === "tm_power") {
-                displayValue = `${res.bowl1}-${res.bowl2}-${res.bowl3}`;
+                displayValue = `${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`;
               }
             }
             return (
-              <span key={resource} style={{ marginRight: "1em" }}>
+              <span key={resource} className="plan-details-resource-pair">
                 {resource}: {displayValue}
               </span>
             );

@@ -200,9 +200,23 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     });
   };
 
+  // Helper to set all resource input visibilities for a stage
+  const setAllResourceInputsVisibility = (stageIdx: number, visible: boolean) => {
+    setResourceInputVisibility(prev => {
+      const stageVisibility = { ...prev[stageIdx] };
+      if (plan && plan.resourceTypes) {
+        Object.keys(plan.resourceTypes).forEach(resource => {
+          stageVisibility[resource] = visible;
+        });
+      }
+      return { ...prev, [stageIdx]: stageVisibility };
+    });
+  };
+
   return (
     <div className="plan-details-container">
       <div className="plan-details-header">
+        <img src="/app/icons/logo.png" alt="GamePlan Logo" className="plan-details-logo" />
         <h2 className="plan-details-title">{planName}</h2>
         <button className="plan-details-menu-btn" onClick={() => setMenuOpen(!menuOpen)}>
           &#9776;
@@ -281,6 +295,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                         }}
                         resourceInputVisibility={resourceInputVisibility[idx] ?? {}}
                         toggleResourceInputVisibility={(resource: string) => toggleResourceInputVisibility(idx, resource)}
+                        setAllResourceInputsVisibility={(visible: boolean) => setAllResourceInputsVisibility(idx, visible)}
                       />
                     );
                   })}
@@ -304,11 +319,11 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
               if (res.type === "simple") {
                 displayValue = res.value;
               } else if (res.type === "tm_power") {
-                displayValue = `${res.bowl1}-${res.bowl2}-${res.bowl3}`;
+                displayValue = `${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`;
               }
             }
             return (
-              <span key={resource} style={{ marginRight: "1em" }}>
+              <span key={resource} className="plan-details-resource-pair">
                 {resource}: {displayValue}
               </span>
             );

@@ -105,6 +105,12 @@
   z-index: 10;
 }
 
+.plan-details-resource-pair {
+  white-space: nowrap;
+  display: inline-block;
+  margin-right: 1em;
+}
+
 .plan-details-sum-symbol {
   font-size: 1.5rem;
   font-weight: bold;
@@ -153,4 +159,11 @@
 
 .plan-details-description-label {
   display: none;
+}
+
+.plan-details-logo {
+  height: 40px;
+  width: 40px;
+  margin-right: 12px;
+  vertical-align: middle;
 }

@@ -89,7 +89,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
   return (
     <div className="dashboard-container">
       <div className="dashboard-brand-header">
-        <img src="icons/logo.png" alt="GamePlan Logo" className="dashboard-logo" />
+        <img src="/app/icons/logo.png" alt="GamePlan Logo" className="dashboard-logo" />
         <span className="dashboard-headline">GamePlan</span>
       </div>
       <div className="dashboard-header">
