@@ -23,6 +23,9 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
   const [error, setError] = useState<string | null>(null);
   const { showConfirmDialog } = useConfirmDialog();
 
+  // Visibility state for all stages/resources
+  const [resourceInputVisibility, setResourceInputVisibility] = useState<Record<number, Record<string, boolean>>>({});
+
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -50,6 +53,23 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     }, 300);
     return () => clearTimeout(handler);
   }, [plan?.description, plan?.stages]);
+
+  // Ensure all resources for all stages are initialized to true
+  useEffect(() => {
+    if (!plan) return;
+    setResourceInputVisibility(prev => {
+      const updated = { ...prev };
+      plan.stages.forEach((stage, idx) => {
+        if (!updated[idx]) updated[idx] = {};
+        Object.keys(plan.resourceTypes).forEach(resource => {
+          if (updated[idx][resource] === undefined) {
+            updated[idx][resource] = true;
+          }
+        });
+      });
+      return updated;
+    });
+  }, [plan, plan?.resourceTypes]);
 
   const createEmptyResourceChange = (type: ResourceType): ResourceChangeValue => {
     if (type === ResourceType.TM_POWER) {
@@ -169,6 +189,17 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     );
   }
 
+  // Helper to toggle visibility for a specific stage/resource
+  const toggleResourceInputVisibility = (stageIdx: number, resource: string) => {
+    setResourceInputVisibility(prev => {
+      const stageVisibility = prev[stageIdx] ? { ...prev[stageIdx] } : {};
+      const current = stageVisibility[resource];
+      // If undefined, treat as true, so first click sets to false
+      stageVisibility[resource] = current === undefined ? false : !current;
+      return { ...prev, [stageIdx]: stageVisibility };
+    });
+  };
+
   return (
     <div className="plan-details-container">
       <div className="plan-details-header">
@@ -248,6 +279,8 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                             stages: plan.stages.filter((_, i) => i !== idx)
                           });
                         }}
+                        resourceInputVisibility={resourceInputVisibility[idx] ?? {}}
+                        toggleResourceInputVisibility={(resource: string) => toggleResourceInputVisibility(idx, resource)}
                       />
                     );
                   })}

@@ -17,9 +17,11 @@ interface PlanStageEditorProps {
   onAddAfter?: () => void;
   onDelete?: () => void;
   dragHandleProps?: React.HTMLAttributes<HTMLSpanElement>;
+  resourceInputVisibility?: Record<string, boolean>;
+  toggleResourceInputVisibility?: (resource: string) => void;
 }
 
-const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChange, currentResources, resourceTypes, resourceOrder, onAddBefore, onAddAfter, onDelete, dragHandleProps }) => {
+const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChange, currentResources, resourceTypes, resourceOrder, onAddBefore, onAddAfter, onDelete, dragHandleProps, resourceInputVisibility, toggleResourceInputVisibility }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [menuPosition, setMenuPosition] = React.useState<{top: number, left: number} | null>(null);
   const menuBtnRef = React.useRef<HTMLButtonElement>(null);
@@ -61,6 +63,7 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
     false,
     currentResources || {}
   );
+
   return (
     <div className="plan-stage-editor plan-stage-editor-debug">
       <div className="plan-stage-header">
@@ -135,6 +138,9 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
               }
             });
           };
+          // If visibility props are not provided, always show details and do not render the checkbox
+          const showDetails = resourceInputVisibility ? (resourceInputVisibility[resource] ?? true) : true;
+          const onToggleShowDetails = toggleResourceInputVisibility ? () => toggleResourceInputVisibility(resource) : undefined;
           return (
             <ResourceInput
               key={resource}
@@ -142,6 +148,8 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
               value={value}
               onChange={handleResourceChange}
               type={resourceTypes[resource] === ResourceType.TM_POWER ? ResourceInputType.TM_POWER : ResourceInputType.SIMPLE}
+              showDetails={showDetails}
+              onToggleShowDetails={onToggleShowDetails}
             />
           );
         })}

@@ -11,9 +11,11 @@ interface ResourceInputProps {
   value: number | { bowl1: number; bowl2: number; bowl3: number };
   onChange: (value: number | { bowl1: number; bowl2: number; bowl3: number }) => void;
   type?: ResourceInputType;
+  showDetails?: boolean;
+  onToggleShowDetails?: () => void;
 }
 
-const ResourceInput: React.FC<ResourceInputProps> = ({ resource, value, onChange, type = ResourceInputType.SIMPLE }) => {
+const ResourceInput: React.FC<ResourceInputProps> = ({ resource, value, onChange, type = ResourceInputType.SIMPLE, showDetails = true, onToggleShowDetails }) => {
   if (type === ResourceInputType.TM_POWER) {
     // Ensure value is always an object for TM_POWER
     const powerValue = (typeof value === "object" && value !== null)
@@ -26,7 +28,7 @@ const ResourceInput: React.FC<ResourceInputProps> = ({ resource, value, onChange
           use: (value as any).use ?? 0
         }
       : { bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
-    return <ResourceInputPower resource={resource} value={powerValue} onChange={onChange} />;
+    return <ResourceInputPower resource={resource} value={powerValue} onChange={onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails!} />;
   }
   // Only allow arithmetic for numbers
   const numValue = typeof value === "number" ? value : 0;
@@ -56,28 +58,43 @@ const ResourceInput: React.FC<ResourceInputProps> = ({ resource, value, onChange
   };
   return (
     <div className="resource-input">
-      <label className="resource-input-label">{resource}</label>
-      <button
-        type="button"
-        className="resource-input-btn resource-input-btn-decrement"
-        onClick={handleDecrement}
-        aria-label={`Decrease ${resource}`}
-      >−</button>
-      <input
-        className="resource-input-spinner"
-        type="number"
-        value={localNumValue}
-        onChange={handleNumChange}
-        onBlur={handleNumBlur}
-        step={1}
-        inputMode="numeric"
-      />
-      <button
-        type="button"
-        className="resource-input-btn resource-input-btn-increment"
-        onClick={handleIncrement}
-        aria-label={`Increase ${resource}`}
-      >+</button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+        <input
+          type="checkbox"
+          checked={showDetails}
+          onChange={onToggleShowDetails}
+          id={`show-simple-details-${resource}`}
+        />
+        <label className="resource-input-label" htmlFor={`show-simple-details-${resource}`}>{resource}</label>
+        {!showDetails && (
+          <span className="resource-input-hidden-value">{numValue}</span>
+        )}
+      </div>
+      {showDetails && (
+        <>
+          <button
+            type="button"
+            className="resource-input-btn resource-input-btn-decrement"
+            onClick={handleDecrement}
+            aria-label={`Decrease ${resource}`}
+          >−</button>
+          <input
+            className="resource-input-spinner"
+            type="number"
+            value={localNumValue}
+            onChange={handleNumChange}
+            onBlur={handleNumBlur}
+            step={1}
+            inputMode="numeric"
+          />
+          <button
+            type="button"
+            className="resource-input-btn resource-input-btn-increment"
+            onClick={handleIncrement}
+            aria-label={`Increase ${resource}`}
+          >+</button>
+        </>
+      )}
     </div>
   );
 };
