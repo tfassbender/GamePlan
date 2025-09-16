@@ -53,7 +53,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
 
   const createEmptyResourceChange = (type: ResourceType): ResourceChangeValue => {
     if (type === ResourceType.TM_POWER) {
-      return { type: "tm_power", bowl1: 0, bowl2: 0, bowl3: 0 };
+      return { type: "tm_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
     }
     return { type: "simple", value: 0 };
   };
@@ -142,7 +142,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
   };
 
   // Calculate final resources and validity for the whole plan
-  const finalResourceResult = plan ? calculatePlanResources(plan.stages, true) : { finalResources: {}, isValid: true };
+  const finalResourceResult = plan ? calculatePlanResources(plan.stages, false) : { finalResources: {}, isValid: true };
 
   // Helper for dnd-kit sortable
   function SortableStage({ id, idx, stage, ...rest }: any) {

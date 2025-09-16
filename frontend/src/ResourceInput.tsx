@@ -1,4 +1,5 @@
 import React from "react";
+import ResourceInputPower from "./ResourceInputPower";
 
 export enum ResourceInputType {
   SIMPLE = "SIMPLE",
@@ -14,61 +15,18 @@ interface ResourceInputProps {
 
 const ResourceInput: React.FC<ResourceInputProps> = ({ resource, value, onChange, type = ResourceInputType.SIMPLE }) => {
   if (type === ResourceInputType.TM_POWER) {
-    const initialPowerValue = (typeof value === "object" && value !== null)
-      ? value as { bowl1: number; bowl2: number; bowl3: number }
-      : { bowl1: 0, bowl2: 0, bowl3: 0 };
-    const [localPowerValue, setLocalPowerValue] = React.useState(initialPowerValue);
-    // Sync local state with prop changes
-    React.useEffect(() => {
-      setLocalPowerValue(initialPowerValue);
-    }, [value]);
-    const handlePowerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setLocalPowerValue(prev => ({ ...prev, [name]: Number(value) }));
-    };
-    const handlePowerBlur = () => {
-      onChange(localPowerValue);
-    };
-    return (
-      <div className="resource-input">
-        <label className="resource-input-label">{resource}</label>
-        <div style={{ display: 'flex', gap: '0.5em' }}>
-          <input
-            key="bowl1"
-            className="resource-input-tm-power-oval"
-            type="number"
-            name="bowl1"
-            value={localPowerValue.bowl1}
-            onChange={handlePowerChange}
-            onBlur={handlePowerBlur}
-            min={0}
-            aria-label="Power Bowl 1"
-          />
-          <input
-            key="bowl2"
-            className="resource-input-tm-power-oval"
-            type="number"
-            name="bowl2"
-            value={localPowerValue.bowl2}
-            onChange={handlePowerChange}
-            onBlur={handlePowerBlur}
-            min={0}
-            aria-label="Power Bowl 2"
-          />
-          <input
-            key="bowl3"
-            className="resource-input-tm-power-oval"
-            type="number"
-            name="bowl3"
-            value={localPowerValue.bowl3}
-            onChange={handlePowerChange}
-            onBlur={handlePowerBlur}
-            min={0}
-            aria-label="Power Bowl 3"
-          />
-        </div>
-      </div>
-    );
+    // Ensure value is always an object for TM_POWER
+    const powerValue = (typeof value === "object" && value !== null)
+      ? {
+          bowl1: value.bowl1 ?? 0,
+          bowl2: value.bowl2 ?? 0,
+          bowl3: value.bowl3 ?? 0,
+          gain: (value as any).gain ?? 0,
+          burn: (value as any).burn ?? 0,
+          use: (value as any).use ?? 0
+        }
+      : { bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
+    return <ResourceInputPower resource={resource} value={powerValue} onChange={onChange} />;
   }
   // Only allow arithmetic for numbers
   const numValue = typeof value === "number" ? value : 0;

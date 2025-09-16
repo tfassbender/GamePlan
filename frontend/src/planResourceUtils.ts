@@ -24,7 +24,15 @@ export function calculatePlanResources(
     if (val && typeof val === "object" && "type" in val && val.type === "simple") {
       resources[key] = { type: "simple", value: val.value };
     } else if (val && typeof val === "object" && "type" in val && val.type === "tm_power") {
-      resources[key] = { type: "tm_power", bowl1: val.bowl1, bowl2: val.bowl2, bowl3: val.bowl3 };
+      resources[key] = {
+        type: "tm_power",
+        bowl1: val.bowl1,
+        bowl2: val.bowl2,
+        bowl3: val.bowl3,
+        gain: val.gain ?? 0,
+        burn: val.burn ?? 0,
+        use: val.use ?? 0
+      };
     }
   }
   let isValid = true;
@@ -41,8 +49,17 @@ export function calculatePlanResources(
       if (change && typeof change === "object" && "type" in change && change.type === "tm_power") {
         const { bowl1, bowl2, bowl3 } = change;
         if (bowl1 !== 0 || bowl2 !== 0 || bowl3 !== 0) {
-          resources[key] = { type: "tm_power", bowl1, bowl2, bowl3 };
+          resources[key] = {
+            type: "tm_power",
+            bowl1,
+            bowl2,
+            bowl3,
+            gain: change.gain ?? 0,
+            burn: change.burn ?? 0,
+            use: change.use ?? 0
+          };
         }
+        if (!allowNegative && (bowl1 < 0 || bowl2 < 0 || bowl3 < 0)) isValid = false;
       }
     }
   }

@@ -30,4 +30,7 @@ export interface PowerResourceChange {
   bowl1: number;
   bowl2: number;
   bowl3: number;
+  gain: number;
+  burn: number;
+  use: number;
 }
