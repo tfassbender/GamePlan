@@ -47,19 +47,50 @@ export function calculatePlanResources(
         if (!allowNegative && newValue < 0) isValid = false;
       }
       if (change && typeof change === "object" && "type" in change && change.type === "tm_power") {
-        const { bowl1, bowl2, bowl3 } = change;
-        if (bowl1 !== 0 || bowl2 !== 0 || bowl3 !== 0) {
-          resources[key] = {
-            type: "tm_power",
-            bowl1,
-            bowl2,
-            bowl3,
-            gain: change.gain ?? 0,
-            burn: change.burn ?? 0,
-            use: change.use ?? 0
-          };
+        let { bowl1, bowl2, bowl3, gain, burn, use } = change;
+        // If all bowl inputs are zero, do not set the bowls, use previous values
+        let prevPower = resources[key] && resources[key].type === "tm_power" ? resources[key] : { bowl1: 0, bowl2: 0, bowl3: 0 };
+        let newBowl1, newBowl2, newBowl3;
+        if ((bowl1 === 0) && (bowl2 === 0) && (bowl3 === 0)) {
+          newBowl1 = prevPower.bowl1;
+          newBowl2 = prevPower.bowl2;
+          newBowl3 = prevPower.bowl3;
+        } else {
+          newBowl1 = bowl1;
+          newBowl2 = bowl2;
+          newBowl3 = bowl3;
         }
-        if (!allowNegative && (bowl1 < 0 || bowl2 < 0 || bowl3 < 0)) isValid = false;
+        // Apply "gain" effect
+        for (let i = 0; i < (gain ?? 0); i++) {
+          if (newBowl1 > 0) {
+            newBowl1--;
+            newBowl2++;
+          } else if (newBowl2 > 0) {
+            newBowl2--;
+            newBowl3++;
+          }
+          // else do nothing
+        }
+        // Apply "burn" effect
+        for (let i = 0; i < (burn ?? 0); i++) {
+          newBowl2 -= 2;
+          newBowl3 += 1;
+        }
+        // Apply "use" effect
+        for (let i = 0; i < (use ?? 0); i++) {
+          newBowl3--;
+          newBowl1++;
+        }
+        resources[key] = {
+          type: "tm_power",
+          bowl1: newBowl1,
+          bowl2: newBowl2,
+          bowl3: newBowl3,
+          gain: gain ?? 0,
+          burn: burn ?? 0,
+          use: use ?? 0
+        };
+        if (!allowNegative && (newBowl1 < 0 || newBowl2 < 0 || newBowl3 < 0)) isValid = false;
       }
     }
   }
