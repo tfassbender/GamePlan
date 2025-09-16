@@ -42,7 +42,7 @@ const PlanStagesList: React.FC<PlanStagesListProps> = ({ initialStages, resource
             key={idx}
             index={idx}
             stage={stage}
-            onChange={updated => handleStageChange(idx, updated)}
+            onChange={(updated: PlanStageDto) => handleStageChange(idx, updated)}
             resourceTypes={resourceTypes}
             onAddBefore={() => handleAddBefore(idx)}
             currentResources={finalResources}

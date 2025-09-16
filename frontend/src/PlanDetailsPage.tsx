@@ -161,6 +161,8 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
           index={idx}
           stage={stage}
           dragHandleProps={{ ...attributes, ...listeners }}
+          resourceTypes={plan?.resourceTypes ?? {}}
+          resourceOrder={plan?.resourceOrder ?? []}
           {...rest}
         />
       </div>
@@ -232,7 +234,8 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                         idx={idx}
                         stage={stage}
                         currentResources={resourcesBeforeStage}
-                        resourceTypes={plan.resourceTypes}
+                        resourceTypes={plan?.resourceTypes ?? {}}
+                        resourceOrder={plan?.resourceOrder ?? []}
                         onChange={(updatedStage: any) => {
                           const newStages = plan.stages.map((s, i) => i === idx ? updatedStage : s);
                           setPlan({ ...plan, stages: newStages });

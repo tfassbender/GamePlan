@@ -12,13 +12,14 @@ interface PlanStageEditorProps {
   onChange: (stage: PlanStageDto) => void;
   currentResources?: Record<string, ResourceChangeValue>;
   resourceTypes: Record<string, ResourceType>;
+  resourceOrder?: string[];
   onAddBefore?: () => void;
   onAddAfter?: () => void;
   onDelete?: () => void;
   dragHandleProps?: React.HTMLAttributes<HTMLSpanElement>;
 }
 
-const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChange, currentResources, resourceTypes, onAddBefore, onAddAfter, onDelete, dragHandleProps }) => {
+const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChange, currentResources, resourceTypes, resourceOrder, onAddBefore, onAddAfter, onDelete, dragHandleProps }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [menuPosition, setMenuPosition] = React.useState<{top: number, left: number} | null>(null);
   const menuBtnRef = React.useRef<HTMLButtonElement>(null);
@@ -108,7 +109,10 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
         document.body
       )}
       <div className="plan-stage-resources">
-        {Object.keys(resourceTypes).map(resource => {
+        {(resourceOrder
+          ? [...resourceOrder, ...Object.keys(resourceTypes).filter(r => !resourceOrder.includes(r))]
+          : Object.keys(resourceTypes)
+        ).map(resource => {
           const resourceChange = stage.resourceChanges[resource];
           let value: any = 0;
           if (resourceTypes[resource] === ResourceType.TM_POWER) {
@@ -120,7 +124,7 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
               ? resourceChange.value
               : 0;
           }
-          const handleResourceChange = React.useCallback((newValue: any) => {
+          const handleResourceChange = (newValue: any) => {
             onChange({
               ...stage,
               resourceChanges: {
@@ -130,7 +134,7 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({ index, stage, onChang
                   : { type: "simple", value: newValue }
               }
             });
-          }, [onChange, stage, resource, resourceTypes]);
+          };
           return (
             <ResourceInput
               key={resource}

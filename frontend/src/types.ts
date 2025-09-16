@@ -9,6 +9,7 @@ export interface PlanDto {
   description: string;
   lastModified: string;
   resourceTypes: Record<string, ResourceType>;
+  resourceOrder: string[];
   stages: PlanStageDto[];
 }
 

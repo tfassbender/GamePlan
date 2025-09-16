@@ -12,5 +12,6 @@ public class PlanDto {
   public String description;
   public String lastModified;
   public Map<String, ResourceType> resourceTypes = new HashMap<>();
+  public List<String> resourceOrder = new ArrayList<>();
   public List<PlanStageDto> stages = new ArrayList<>();
 }

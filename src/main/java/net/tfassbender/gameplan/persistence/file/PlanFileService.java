@@ -67,6 +67,7 @@ public class PlanFileService implements PlanService {
     newPlan.gameName = gameName;
     newPlan.lastModified = getCurrentTimestampAsString();
     newPlan.resourceTypes.putAll(game.resources);
+    newPlan.resourceOrder.addAll(game.resourceOrder);
     PlanStageDto initialStage = new PlanStageDto();
     initialStage.resourceChanges.putAll(game.defaultStartingResources.resourceChanges);
     initialStage.description = game.defaultStartingResources.description;
