@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./PlanStageEditor.css";
-import { PlanStageDto, ResourceType, ResourceChangeValue, SimpleResourceChange, PowerResourceChange } from "./types";
-import ResourceInput, { ResourceInputType } from "./ResourceInput";
-import "./ResourceInput.css";
-import { calculatePlanResources } from "./planResourceUtils";
+import { PlanStageDto, ResourceType, ResourceChangeValue, SimpleResourceChange, PowerResourceChange } from "./common/types";
+import ResourceInput, { ResourceInputType } from "./resourceInputs/ResourceInput";
+import "./resourceInputs/ResourceInput.css";
+import { calculatePlanResources } from "./common/planResourceUtils";
 
 interface PlanStageEditorProps {
   index: number;

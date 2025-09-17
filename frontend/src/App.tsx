@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, useNavigate, useParams } from "react-rout
 import LoginPage from "./LoginPage";
 import DashboardPage from "./DashboardPage";
 import PlanDetailsPage from "./PlanDetailsPage";
-import { loginUser, signUpUser } from "./api";
+import { loginUser, signUpUser } from "./common/api";
 import "./App.css";
 import ConfirmDialog, { ConfirmDialogType } from "./ConfirmDialog";
 

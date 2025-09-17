@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getGames, getPlans, createPlan, deletePlan, getVersion } from "./api";
+import { getGames, getPlans, createPlan, deletePlan, getVersion } from "./common/api";
 import { useConfirmDialog } from "./App";
 import { ConfirmDialogType } from "./ConfirmDialog";
 import "./DashboardPage.css";

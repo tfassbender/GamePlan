@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./LoginPage.css";
-import { getVersion } from "./api";
+import { getVersion } from "./common/api";
 
 interface LoginPageProps {
   onLogin: (username: string) => void | Promise<void>;

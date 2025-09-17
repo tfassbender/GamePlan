@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PlanStageEditor from "./PlanStageEditor";
-import type { PlanStageDto, ResourceType } from "./types";
-import { calculatePlanResources } from "./planResourceUtils";
+import type { PlanStageDto, ResourceType } from "./common/types";
+import { calculatePlanResources } from "./common/planResourceUtils";
 
 interface PlanStagesListProps {
   initialStages: PlanStageDto[];

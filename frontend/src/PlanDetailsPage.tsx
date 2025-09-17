@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./PlanDetailsPage.css";
-import { fetchPlan, updatePlan, clonePlan, deletePlan } from "./api";
+import { fetchPlan, updatePlan, clonePlan, deletePlan } from "./common/api";
 import { useConfirmDialog } from "./App";
 import { ConfirmDialogType } from "./ConfirmDialog";
-import { PlanDto, ResourceType, ResourceChangeValue } from "./types";
+import { PlanDto, ResourceType, ResourceChangeValue, PlanStageDto } from "./common/types";
 import PlanStageEditor from "./PlanStageEditor";
-import { calculatePlanResources } from "./planResourceUtils";
+import { calculatePlanResources } from "./common/planResourceUtils";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from "@dnd-kit/sortable";
+import ResourceInput, { ResourceInputType } from "./resourceInputs/ResourceInput";
+import "./resourceInputs/ResourceInput.css";
 
 interface PlanDetailsPageProps {
   username: string;
@@ -30,11 +32,11 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     setLoading(true);
     setError(null);
     fetchPlan(username, planName)
-      .then(data => {
+      .then((data: PlanDto) => {
         setPlan(data);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err: Error) => {
         setError(err.message);
         setLoading(false);
       });
@@ -47,7 +49,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     if (loading) return;
     const handler = setTimeout(() => {
       updatePlan(username, plan)
-        .catch(err => {
+        .catch((err: Error) => {
           // Optionally handle error (e.g., show a message)
         });
     }, 300);
@@ -59,7 +61,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     if (!plan) return;
     setResourceInputVisibility(prev => {
       const updated = { ...prev };
-      plan.stages.forEach((stage, idx) => {
+      plan.stages.forEach((stage: PlanStageDto, idx: number) => {
         if (!updated[idx]) updated[idx] = {};
         Object.keys(plan.resourceTypes).forEach(resource => {
           if (updated[idx][resource] === undefined) {
@@ -165,7 +167,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
   const finalResourceResult = plan ? calculatePlanResources(plan.stages, false) : { finalResources: {}, isValid: true };
 
   // Helper for dnd-kit sortable
-  function SortableStage({ id, idx, stage, ...rest }: any) {
+  function SortableStage({ id, idx, stage, ...rest }: { id: string, idx: number, stage: PlanStageDto, [key: string]: any }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
     return (
       <div
@@ -183,6 +185,20 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
           dragHandleProps={{ ...attributes, ...listeners }}
           resourceTypes={plan?.resourceTypes ?? {}}
           resourceOrder={plan?.resourceOrder ?? []}
+          onChange={(updatedStage: PlanStageDto) => {
+            if (!plan) return;
+            const newStages = plan.stages.map((s: PlanStageDto, i: number) => i === idx ? updatedStage : s);
+            setPlan({
+              ...plan,
+              stages: newStages,
+              name: plan.name ?? "",
+              gameName: plan.gameName ?? "",
+              description: plan.description ?? "",
+              lastModified: plan.lastModified ?? "",
+              resourceTypes: plan.resourceTypes ?? {},
+              resourceOrder: plan.resourceOrder ?? [],
+            });
+          }}
           {...rest}
         />
       </div>
@@ -281,8 +297,8 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                         currentResources={resourcesBeforeStage}
                         resourceTypes={plan?.resourceTypes ?? {}}
                         resourceOrder={plan?.resourceOrder ?? []}
-                        onChange={(updatedStage: any) => {
-                          const newStages = plan.stages.map((s, i) => i === idx ? updatedStage : s);
+                        onChange={(updatedStage: PlanStageDto) => {
+                          const newStages = plan.stages.map((s: PlanStageDto, i: number) => i === idx ? updatedStage : s);
                           setPlan({ ...plan, stages: newStages });
                         }}
                         onAddBefore={() => handleAddStageBefore(idx)}
