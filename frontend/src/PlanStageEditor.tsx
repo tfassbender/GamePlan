@@ -194,7 +194,10 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
           &#931;
         </span>
         <span className="plan-details-resources-text">
-          {Object.keys(resourceTypes).map(resource => {
+          {(resourceOrder
+            ? [...resourceOrder, ...Object.keys(resourceTypes).filter(r => !resourceOrder.includes(r))]
+            : Object.keys(resourceTypes)
+          ).map(resource => {
             const res = finalResources[resource];
             let displayValue: string | number = 0;
             if (res && typeof res === "object" && "type" in res) {

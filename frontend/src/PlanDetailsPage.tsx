@@ -312,22 +312,27 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
           &#931;
         </span>
         <span className="plan-details-resources-text">
-          {plan && Object.keys(plan.resourceTypes).map(resource => {
-            const res = finalResourceResult.finalResources[resource];
-            let displayValue: string | number = 0;
-            if (res && typeof res === "object" && "type" in res) {
-              if (res.type === "simple") {
-                displayValue = res.value;
-              } else if (res.type === "tm_power") {
-                displayValue = `${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`;
+          {plan && (
+            (plan.resourceOrder?.length > 0
+              ? [...plan.resourceOrder, ...Object.keys(plan.resourceTypes).filter(r => !plan.resourceOrder.includes(r))]
+              : Object.keys(plan.resourceTypes)
+            ).map(resource => {
+              const res = finalResourceResult.finalResources[resource];
+              let displayValue: string | number = 0;
+              if (res && typeof res === "object" && "type" in res) {
+                if (res.type === "simple") {
+                  displayValue = res.value;
+                } else if (res.type === "tm_power") {
+                  displayValue = `${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`;
+                }
               }
-            }
-            return (
-              <span key={resource} className="plan-details-resource-pair">
-                {resource}: {displayValue}
-              </span>
-            );
-          })}
+              return (
+                <span key={resource} className="plan-details-resource-pair">
+                  {resource}: {displayValue}
+                </span>
+              );
+            })
+          )}
         </span>
       </div>
     </div>
