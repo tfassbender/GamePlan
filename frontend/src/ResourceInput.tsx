@@ -1,58 +1,91 @@
 import React from "react";
 import ResourceInputPower from "./ResourceInputPower";
+import ResourceInputCults from "./ResourceInputCults";
 
 export enum ResourceInputType {
   SIMPLE = "SIMPLE",
-  TM_POWER = "TM_POWER" // power resource in Terra Mystica
+  TM_POWER = "TM_POWER", // power resource in Terra Mystica
+  TM_CULTS = "TM_CULTS" // cults resource in Terra Mystica
 }
 
-interface ResourceInputProps {
-  resource: string;
-  value: number | { bowl1: number; bowl2: number; bowl3: number };
-  onChange: (value: number | { bowl1: number; bowl2: number; bowl3: number }) => void;
-  type?: ResourceInputType;
-  showDetails?: boolean;
-  onToggleShowDetails?: () => void;
+// Type for TM_CULTS
+export interface CultsValue {
+  fire: number;
+  water: number;
+  earth: number;
+  air: number;
 }
 
-const ResourceInput: React.FC<ResourceInputProps> = ({ resource, value, onChange, type = ResourceInputType.SIMPLE, showDetails = true, onToggleShowDetails }) => {
-  if (type === ResourceInputType.TM_POWER) {
-    // Ensure value is always an object for TM_POWER
-    const powerValue = (typeof value === "object" && value !== null)
-      ? {
-          bowl1: value.bowl1 ?? 0,
-          bowl2: value.bowl2 ?? 0,
-          bowl3: value.bowl3 ?? 0,
-          gain: (value as any).gain ?? 0,
-          burn: (value as any).burn ?? 0,
-          use: (value as any).use ?? 0
-        }
-      : { bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
-    return <ResourceInputPower resource={resource} value={powerValue} onChange={onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails!} />;
+// Type for TM_POWER
+export interface PowerValue {
+  bowl1: number;
+  bowl2: number;
+  bowl3: number;
+  gain: number;
+  burn: number;
+  use: number;
+}
+
+// Discriminated union for props
+export type ResourceInputProps =
+  | {
+      resource: string;
+      value: number;
+      onChange: (value: number) => void;
+      type?: ResourceInputType.SIMPLE;
+      showDetails?: boolean;
+      onToggleShowDetails?: () => void;
+    }
+  | {
+      resource: string;
+      value: PowerValue;
+      onChange: (value: PowerValue) => void;
+      type: ResourceInputType.TM_POWER;
+      showDetails?: boolean;
+      onToggleShowDetails?: () => void;
+    }
+  | {
+      resource: string;
+      value: CultsValue;
+      onChange: (value: CultsValue) => void;
+      type: ResourceInputType.TM_CULTS;
+      showDetails?: boolean;
+      onToggleShowDetails?: () => void;
+    };
+
+const ResourceInput: React.FC<ResourceInputProps> = (props) => {
+  const { resource, showDetails = true, onToggleShowDetails } = props;
+  if (props.type === ResourceInputType.TM_POWER) {
+    const value = props.value as PowerValue;
+    return <ResourceInputPower resource={resource} value={value} onChange={props.onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails!} />;
   }
-  // Only allow arithmetic for numbers
-  const numValue = typeof value === "number" ? value : 0;
-  const [localNumValue, setLocalNumValue] = React.useState(numValue);
+  if (props.type === ResourceInputType.TM_CULTS) {
+    const value = props.value as CultsValue;
+    return <ResourceInputCults resource={resource} value={value} onChange={props.onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails!} />;
+  }
+  // SIMPLE
+  const value = props.value as number;
+  const [localNumValue, setLocalNumValue] = React.useState(value);
   React.useEffect(() => {
-    setLocalNumValue(numValue);
+    setLocalNumValue(value);
   }, [value]);
   const handleNumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalNumValue(Number(e.target.value));
   };
   const handleNumBlur = () => {
-    onChange(localNumValue);
+    props.onChange(localNumValue);
   };
   const handleDecrement = () => {
     setLocalNumValue(v => {
       const newValue = v - 1;
-      onChange(newValue);
+      props.onChange(newValue);
       return newValue;
     });
   };
   const handleIncrement = () => {
     setLocalNumValue(v => {
       const newValue = v + 1;
-      onChange(newValue);
+      props.onChange(newValue);
       return newValue;
     });
   };
@@ -67,7 +100,7 @@ const ResourceInput: React.FC<ResourceInputProps> = ({ resource, value, onChange
         />
         <label className="resource-input-label" htmlFor={`show-simple-details-${resource}`}>{resource}</label>
         {!showDetails && (
-          <span className="resource-input-hidden-value">{numValue}</span>
+          <span className="resource-input-hidden-value">{value}</span>
         )}
       </div>
       {showDetails && (

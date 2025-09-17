@@ -154,7 +154,11 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
           if (resourceTypes[resource] === ResourceType.TM_POWER) {
             value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "tm_power")
               ? resourceChange
-              : { type: "tm_power", bowl1: 0, bowl2: 0, bowl3: 0 };
+              : { type: "tm_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
+          } else if (resourceTypes[resource] === ResourceType.TM_CULTS) {
+            value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "tm_cults")
+              ? resourceChange
+              : { type: "tm_cults", fire: 0, water: 0, earth: 0, air: 0 };
           } else {
             value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "simple")
               ? resourceChange.value
@@ -167,6 +171,8 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                 ...stage.resourceChanges,
                 [resource]: resourceTypes[resource] === ResourceType.TM_POWER
                   ? { type: "tm_power", ...newValue }
+                  : resourceTypes[resource] === ResourceType.TM_CULTS
+                  ? { type: "tm_cults", ...newValue }
                   : { type: "simple", value: newValue }
               }
             });
@@ -178,9 +184,13 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
             <ResourceInput
               key={resource}
               resource={resource}
-              value={value}
+              value={resourceTypes[resource] === ResourceType.TM_CULTS ? { fire: value.fire, water: value.water, earth: value.earth, air: value.air } : value}
               onChange={handleResourceChange}
-              type={resourceTypes[resource] === ResourceType.TM_POWER ? ResourceInputType.TM_POWER : ResourceInputType.SIMPLE}
+              type={resourceTypes[resource] === ResourceType.TM_POWER
+                ? ResourceInputType.TM_POWER
+                : resourceTypes[resource] === ResourceType.TM_CULTS
+                ? ResourceInputType.TM_CULTS
+                : ResourceInputType.SIMPLE}
               showDetails={showDetails}
               onToggleShowDetails={onToggleShowDetails}
             />
@@ -199,17 +209,31 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
             : Object.keys(resourceTypes)
           ).map(resource => {
             const res = finalResources[resource];
-            let displayValue: string | number = 0;
-            if (res && typeof res === "object" && "type" in res) {
-              if (res.type === "simple") {
-                displayValue = res.value;
-              } else if (res.type === "tm_power") {
-                displayValue = `${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`;
-              }
-            }
             return (
               <span key={resource} className="plan-details-resource-pair">
-                {resource}: {displayValue}
+                {resource}: {(() => {
+                  if (res && typeof res === "object" && "type" in res) {
+                    if (res.type === "simple") {
+                      return res.value;
+                    } else if (res.type === "tm_power") {
+                      return (
+                        <span className="plan-details-power-purple">
+                          {`${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`}
+                        </span>
+                      );
+                    } else if (res.type === "tm_cults") {
+                      return (
+                        <>
+                          <span className="plan-details-cults-fire">{res.fire}</span>
+                          -<span className="plan-details-cults-water">{res.water}</span>
+                          -<span className="plan-details-cults-earth">{res.earth}</span>
+                          -<span className="plan-details-cults-air">{res.air}</span>
+                        </>
+                      );
+                    }
+                  }
+                  return 0;
+                })()}
               </span>
             );
           })}

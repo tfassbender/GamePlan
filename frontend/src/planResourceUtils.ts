@@ -33,6 +33,14 @@ export function calculatePlanResources(
         burn: val.burn ?? 0,
         use: val.use ?? 0
       };
+    } else if (val && typeof val === "object" && "type" in val && val.type === "tm_cults") {
+      resources[key] = {
+        type: "tm_cults",
+        fire: val.fire,
+        water: val.water,
+        earth: val.earth,
+        air: val.air
+      };
     }
   }
   let isValid = true;
@@ -91,6 +99,23 @@ export function calculatePlanResources(
           use: use ?? 0
         };
         if (!allowNegative && (newBowl1 < 0 || newBowl2 < 0 || newBowl3 < 0)) isValid = false;
+      }
+      if (change && typeof change === "object" && "type" in change && change.type === "tm_cults") {
+        const prev = resources[key] && resources[key].type === "tm_cults"
+          ? resources[key]
+          : { fire: 0, water: 0, earth: 0, air: 0 };
+        const newFire = prev.fire + change.fire;
+        const newWater = prev.water + change.water;
+        const newEarth = prev.earth + change.earth;
+        const newAir = prev.air + change.air;
+        resources[key] = {
+          type: "tm_cults",
+          fire: newFire,
+          water: newWater,
+          earth: newEarth,
+          air: newAir
+        };
+        if (!allowNegative && (newFire < 0 || newWater < 0 || newEarth < 0 || newAir < 0)) isValid = false;
       }
     }
   }

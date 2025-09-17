@@ -318,17 +318,31 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
               : Object.keys(plan.resourceTypes)
             ).map(resource => {
               const res = finalResourceResult.finalResources[resource];
-              let displayValue: string | number = 0;
-              if (res && typeof res === "object" && "type" in res) {
-                if (res.type === "simple") {
-                  displayValue = res.value;
-                } else if (res.type === "tm_power") {
-                  displayValue = `${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`;
-                }
-              }
               return (
                 <span key={resource} className="plan-details-resource-pair">
-                  {resource}: {displayValue}
+                  {resource}: {(() => {
+                    if (res && typeof res === "object" && "type" in res) {
+                      if (res.type === "simple") {
+                        return res.value;
+                      } else if (res.type === "tm_power") {
+                        return (
+                          <span className="plan-details-power-purple">
+                            {`${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`}
+                          </span>
+                        );
+                      } else if (res.type === "tm_cults") {
+                        return (
+                          <>
+                            <span className="plan-details-cults-fire">{res.fire}</span>
+                            -<span className="plan-details-cults-water">{res.water}</span>
+                            -<span className="plan-details-cults-earth">{res.earth}</span>
+                            -<span className="plan-details-cults-air">{res.air}</span>
+                          </>
+                        );
+                      }
+                    }
+                    return 0;
+                  })()}
                 </span>
               );
             })

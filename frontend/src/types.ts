@@ -15,11 +15,12 @@ export interface PlanDto {
 
 export enum ResourceType {
   SIMPLE = "SIMPLE",
-  TM_POWER = "TM_POWER"
+  TM_POWER = "TM_POWER",
+  TM_CULTS = "TM_CULTS"
   // Add more types as needed
 }
 
-export type ResourceChangeValue = SimpleResourceChange | PowerResourceChange;
+export type ResourceChangeValue = SimpleResourceChange | PowerResourceChange | TerraMysticaCultsResourceChange;
 
 export interface SimpleResourceChange {
   type: "simple";
@@ -34,4 +35,12 @@ export interface PowerResourceChange {
   gain: number;
   burn: number;
   use: number;
+}
+
+export interface TerraMysticaCultsResourceChange {
+  type: "tm_cults";
+  fire: number;
+  water: number;
+  earth: number;
+  air: number;
 }

@@ -1,0 +1,51 @@
+.resource-input-cults-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.resource-input-cults-inputs {
+  display: flex;
+  gap: 1em;
+  margin-top: 0.5em;
+  margin-left: 1em;
+}
+
+.resource-input-cults-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.resource-input-cults-label {
+  font-size: 0.9em;
+  margin-bottom: 0.2em;
+  /* No color here, keep default text color */
+}
+
+.resource-input-cults-spinner {
+  width: 3em;
+  text-align: center;
+  border-radius: 1.5em;
+  font-weight: bold;
+  border-width: 2px;
+  border-style: solid;
+  outline: none;
+}
+
+.cults-fire {
+  background: #ff2d2d;
+  border-color: #b22222;
+}
+.cults-water {
+  background: #2196f3;
+  border-color: #1565c0;
+}
+.cults-earth {
+  background: #a67c52;
+  border-color: #6d4c1b;
+}
+.cults-air {
+  background: #f5f5f5;
+  border-color: #cccccc;
+}

@@ -167,3 +167,28 @@
   margin-right: 12px;
   vertical-align: middle;
 }
+
+.plan-details-power-purple {
+  color: #9c009c;
+  font-weight: bold;
+}
+
+.plan-details-cults-fire {
+  color: #b22222;
+  font-weight: bold;
+}
+
+.plan-details-cults-water {
+  color: #1e90ff;
+  font-weight: bold;
+}
+
+.plan-details-cults-earth {
+  color: #8b5c2a;
+  font-weight: bold;
+}
+
+.plan-details-cults-air {
+  color: #fff;
+  font-weight: bold;
+}
