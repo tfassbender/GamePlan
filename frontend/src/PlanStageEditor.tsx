@@ -41,6 +41,12 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
   const [menuPosition, setMenuPosition] = React.useState<{top: number, left: number} | null>(null);
   const menuBtnRef = React.useRef<HTMLButtonElement>(null);
 
+  // Local state for textarea value to prevent focus loss
+  const [localDescription, setLocalDescription] = React.useState(stage.description);
+  React.useEffect(() => {
+    setLocalDescription(stage.description);
+  }, [stage.description]);
+
   const handleAddBefore = () => {
     setMenuOpen(false);
     if (onAddBefore) onAddBefore();
@@ -95,10 +101,18 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
         </span>
         <textarea
           className="plan-stage-description"
-          value={stage.description}
+          key={`plan-stage-description-${index}`}
+          value={localDescription}
           placeholder="Stage description"
           rows={2}
-          onChange={e => onChange({ ...stage, description: e.target.value })}
+          onChange={e => {
+            setLocalDescription(e.target.value);
+          }}
+          onBlur={() => {
+            if (localDescription !== stage.description) {
+              onChange({ ...stage, description: localDescription });
+            }
+          }}
         />
         <button
           className="plan-stage-menu-btn"
