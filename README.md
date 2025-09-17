@@ -6,9 +6,25 @@ changes over time.
 
 > Designed with tabletop gamers in mind, especially for strategic planning in resource-heavy games.
 
+## 📚 Table of Contents
+
+- [Project Status](#-project-status)
+- [Planned Features](#-planned-features)
+- [Relevant Folders](#-relevant-folders)
+- [Design](#-design)
+- [Screenshots](#-screenshots)
+- [Tech Stack](#-tech-stack)
+- [Why GamePlan?](#-why-gameplan)
+- [Building and Running Locally](#-building-and-running-locally)
+    - [Prerequisites](#prerequisites)
+- [Usage](#-usage)
+- [License](#-license)
+- [Contributions](#-contributions)
+
 ## 🚧 Project Status
 
-GamePlan is currently in development. An MVP is functional, but some features are still being planed or implemented.
+GamePlan is currently in development. Most core features are implemented, but some polishing and additional features are
+still pending. Also, some specialized features for certain games are planned for the future.
 
 ## ✨ Planned Features
 
@@ -38,15 +54,20 @@ GamePlan is currently in development. An MVP is functional, but some features ar
 - Each config defines available resources
 - No admin UI needed for now—just drop files into a config directory
 
-### 📤 Import / Export
-
-- Plans can be **exported** and **imported** (e.g. for testing or sharing)
-
 ## 🌱 Additional (Future) Features
 
 - Resource **templates** for predefined starting states
-- Support for **nested or grouped resources** (e.g. Power Bowls in *Terra Mystica*)
+- Support for **nested or grouped resources** (not only game specific ones for Terra Mystica)
 - **Undo/Redo** for turn/resource edits
+-
+    - Plans can be **exported** and **imported** (e.g. for testing or sharing)
+
+## 📁 Relevant Folders
+
+- [`examples/game_configs/`](examples/game_configs/) — Example game configuration JSON files and templates.
+- [`frontend/`](frontend/) — Source code for the React frontend.
+- [`src/main/resources/`](src/main/resources/) — Backend resources, including `application.properties`.
+- [`scripts/`](scripts/) — Helper scripts to start/stop the server.
 
 ## 🧩 Design
 
@@ -56,6 +77,25 @@ GamePlan is **mobile-first** but fully responsive:
 - **Bottom**: Expandable list of turns
 - **Accordions** for editing individual turns
 - Optional **overlay sidebar** for actions like "new plan", "copy plan", etc.
+
+## 🖼️ Screenshots
+
+Below are some example screenshots of GamePlan in action:
+
+<div style="display: flex; gap: 24px; justify-content: center; align-items: flex-start;">
+  <figure>
+    <img src="screenshots/dashboard.png" alt="Dashboard: Overview of your games and plans" width="500" />
+    <figcaption style="text-align: center;">Dashboard</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/plan_tm_1.png" alt="Valid Terra Mystica Plan" width="500" />
+    <figcaption style="text-align: center;">Valid Terra Mystica Plan</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/plan_tm_invalid.png" alt="Invalid Plan Example" width="500" />
+    <figcaption style="text-align: center;">Invalid Plan Example</figcaption>
+  </figure>
+</div>
 
 ## ⚙️ Tech Stack
 
@@ -90,6 +130,59 @@ or
 ./gradlew quarkusBuild
 java -jar build/quarkus-app/quarkus-run.jar
 ```
+
+Note: If you don't want to compile the project yourself you can also download the latest release from GitHub. If you
+want to run the compiled version go to the directory **quarkus-app** and run the jar file as shown above. For
+configuration and usage info see below.
+
+### Prerequisites
+
+You need to have Java 17 or higher installed to run the quarkus server.
+
+## 🕹️ Usage
+
+To get started with GamePlan download the release from GitHub or build the project yourself (see above).
+
+To use GamePlan you first need to configure some properties and add game config files.
+
+1. **Create an `application.properties` file** for the Quarkus server (if not already present). This file should be
+   placed in the directory where you put the compiled jars / dirs from the release (if you downloaded it) or from the
+   build directory (if you built it manually). In the directory **quarkus-app** create a directory **config** (if not
+   already existing) and place the **application.properties** file there.
+2. **Configure the path to your working directory** by adding the following property:
+
+   ```properties
+   game_plan.path=PATH_TO_YOUR/.game_plan
+   ```
+   Replace `PATH_TO_YOUR/.game_plan` with the absolute path where you want GamePlan to store user plans and game data.
+3. Once the server is started for the first time it will automatically create the working directory (if it does not
+   exist yet) and the following subdirectories:
+    - `.games`: You need to place your game config JSON files here.
+    - `.users`: This directory will contain user data (plans, etc.). You don't need to edit it (only if you want to
+      delete user data manually).
+4. **Add game config JSON files** to your working directory as needed (see the `examples/game_configs/` folder in the
+   GitHub project for
+   templates).
+5. Restart the quarkus server after you added the game configuration files. You might need to delete some old user data
+   if you changed the game config files in a non-compatible way.
+6. Access the GamePlan frontend in your browser at `http://localhost:4713` (or the port you configured in the *
+   *application.properties** file using the property `quarkus.http.port` - see steps 1 and 2). You should also be able
+   to access it from within your local network (using the IP address of your machine or a local DNS name that most
+   FritzBox routers have). This way you don't have to run the quarkus app on you mobile phone but can access it from
+   there (and you friends can access it too if you want to play together).
+7. Enjoy planning your games!
+
+## 📄 application.properties Location Summary
+
+| Scenario               | Location for `application.properties`         | Notes                                                 |
+|------------------------|-----------------------------------------------|-------------------------------------------------------|
+| **Source Build**       | `src/main/resources/`                         | Used during development/building with Gradle.         |
+| **Release/JAR**        | `quarkus-app/config/` (next to the JAR)       | For running the compiled JAR from a release or build. |
+| **Custom Config Path** | Specify with `-Dquarkus.config.location=PATH` | Use JVM arg to override config location if needed.    |
+
+This table summarizes where to place your `application.properties` file depending on how you run GamePlan. For most
+users, use `src/main/resources/` when developing, and `quarkus-app/config/` when running a release or built JAR. You can
+also override the config location using the JVM argument as shown above.
 
 ## 📄 License
 
