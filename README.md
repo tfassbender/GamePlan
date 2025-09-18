@@ -84,16 +84,13 @@ Below are some example screenshots of GamePlan in action:
 
 <div style="display: flex; gap: 24px; justify-content: center; align-items: flex-start;">
   <figure>
-    <img src="screenshots/dashboard.png" alt="Dashboard: Overview of your games and plans" width="500" />
-    <figcaption style="text-align: center;">Dashboard</figcaption>
+    <img src="screenshots/dashboard.png" alt="Dashboard: Overview of your games and plans" width="300" />
   </figure>
   <figure>
-    <img src="screenshots/plan_tm_1.png" alt="Valid Terra Mystica Plan" width="500" />
-    <figcaption style="text-align: center;">Valid Terra Mystica Plan</figcaption>
+    <img src="screenshots/plan_tm_1.png" alt="Valid Terra Mystica Plan" width="300" />
   </figure>
   <figure>
-    <img src="screenshots/plan_tm_invalid.png" alt="Invalid Plan Example" width="500" />
-    <figcaption style="text-align: center;">Invalid Plan Example</figcaption>
+    <img src="screenshots/plan_tm_invalid.png" alt="Invalid Plan Example" width="300" />
   </figure>
 </div>
 
