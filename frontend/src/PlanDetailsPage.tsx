@@ -229,6 +229,20 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     });
   };
 
+  const setAllResourceInputsVisibilityAllStages = (visible: boolean) => {
+    if (!plan || !plan.stages || !plan.resourceTypes) return;
+    setResourceInputVisibility(prev => {
+      const updated: Record<number, Record<string, boolean>> = { ...prev };
+      plan.stages.forEach((stage, idx) => {
+        updated[idx] = updated[idx] ? { ...updated[idx] } : {};
+        Object.keys(plan.resourceTypes).forEach(resource => {
+          updated[idx][resource] = visible;
+        });
+      });
+      return updated;
+    });
+  };
+
   return (
     <div className="plan-details-container">
       <div className="plan-details-header">
@@ -242,6 +256,26 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
             <div className="plan-details-menu" onClick={e => e.stopPropagation()}>
               <button onClick={onBack}>Back</button>
               <button onClick={handleAddStage}>Add stage</button>
+              {plan && plan.stages.length > 0 && plan.resourceTypes && (
+                <>
+                  <button
+                    onClick={() => {
+                      setAllResourceInputsVisibilityAllStages(true);
+                      setMenuOpen(false);
+                    }}
+                  >
+                    Show All Inputs
+                  </button>
+                  <button
+                    onClick={() => {
+                      setAllResourceInputsVisibilityAllStages(false);
+                      setMenuOpen(false);
+                    }}
+                  >
+                    Hide All Inputs
+                  </button>
+                </>
+              )}
               <button onClick={handleClone}>Clone</button>
               <button onClick={handleDelete} className="plan-details-delete-btn">Delete</button>
             </div>
