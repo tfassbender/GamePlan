@@ -10,7 +10,7 @@ import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from "@dnd-kit/sortable";
 import ResourceInput, { ResourceInputType } from "./resourceInputs/ResourceInput";
 import "./resourceInputs/ResourceInput.css";
-import { FaArrowLeft, FaPlus, FaEye, FaEyeSlash, FaClone, FaTrash } from 'react-icons/fa';
+import { FaArrowLeft, FaPlus, FaEye, FaEyeSlash, FaClone, FaTrash, FaInfoCircle } from 'react-icons/fa';
 
 interface PlanDetailsPageProps {
   username: string;
@@ -244,6 +244,35 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     });
   };
 
+  const handleMoveUp = (idx: number) => {
+    if (!plan || idx <= 0) return;
+    const newStages = [...plan.stages];
+    [newStages[idx - 1], newStages[idx]] = [newStages[idx], newStages[idx - 1]];
+    setPlan({ ...plan, stages: newStages });
+  };
+
+  const handleMoveDown = (idx: number) => {
+    if (!plan || idx >= plan.stages.length - 1) return;
+    const newStages = [...plan.stages];
+    [newStages[idx], newStages[idx + 1]] = [newStages[idx + 1], newStages[idx]];
+    setPlan({ ...plan, stages: newStages });
+  };
+
+  const handleOpenFeatures = () => {
+    setMenuOpen(false);
+    navigate('/app/features');
+  };
+
+  const handleShowAllInputs = () => {
+    setAllResourceInputsVisibilityAllStages(true);
+    setMenuOpen(false);
+  };
+
+  const handleHideAllInputs = () => {
+    setAllResourceInputsVisibilityAllStages(false);
+    setMenuOpen(false);
+  };
+
   return (
     <div className="plan-details-container">
       <div className="plan-details-header">
@@ -259,25 +288,16 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
               <button onClick={handleAddStage}><span className="plan-details-menu-icon"><FaPlus /></span> Add stage</button>
               {plan && plan.stages.length > 0 && plan.resourceTypes && (
                 <>
-                  <button
-                    onClick={() => {
-                      setAllResourceInputsVisibilityAllStages(true);
-                      setMenuOpen(false);
-                    }}
-                  >
+                  <button onClick={handleShowAllInputs}>
                     <span className="plan-details-menu-icon"><FaEye /></span> Show All Inputs
                   </button>
-                  <button
-                    onClick={() => {
-                      setAllResourceInputsVisibilityAllStages(false);
-                      setMenuOpen(false);
-                    }}
-                  >
+                  <button onClick={handleHideAllInputs}>
                     <span className="plan-details-menu-icon"><FaEyeSlash /></span> Hide All Inputs
                   </button>
                 </>
               )}
               <button onClick={handleClone}><span className="plan-details-menu-icon"><FaClone /></span> Clone</button>
+              <button onClick={handleOpenFeatures}><span className="plan-details-menu-icon"><FaInfoCircle /></span> Features</button>
               <button onClick={handleDelete} className="plan-details-delete-btn"><span className="plan-details-menu-icon"><FaTrash /></span> Delete</button>
             </div>
           </div>
@@ -347,16 +367,8 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                         resourceInputVisibility={resourceInputVisibility[idx] ?? {}}
                         toggleResourceInputVisibility={(resource: string) => toggleResourceInputVisibility(idx, resource)}
                         setAllResourceInputsVisibility={(visible: boolean) => setAllResourceInputsVisibility(idx, visible)}
-                        onMoveUp={idx > 0 ? () => {
-                          const newStages = [...plan.stages];
-                          [newStages[idx - 1], newStages[idx]] = [newStages[idx], newStages[idx - 1]];
-                          setPlan({ ...plan, stages: newStages });
-                        } : undefined}
-                        onMoveDown={idx < plan.stages.length - 1 ? () => {
-                          const newStages = [...plan.stages];
-                          [newStages[idx], newStages[idx + 1]] = [newStages[idx + 1], newStages[idx]];
-                          setPlan({ ...plan, stages: newStages });
-                        } : undefined}
+                        onMoveUp={idx > 0 ? () => handleMoveUp(idx) : undefined}
+                        onMoveDown={idx < plan.stages.length - 1 ? () => handleMoveDown(idx) : undefined}
                       />
                     );
                   })}

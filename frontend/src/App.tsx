@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useNavigate, useParams } from "react-rout
 import LoginPage from "./LoginPage";
 import DashboardPage from "./DashboardPage";
 import PlanDetailsPage from "./PlanDetailsPage";
+import FeaturePage from "./FeaturePage";
 import { loginUser, signUpUser } from "./common/api";
 import "./App.css";
 import ConfirmDialog, { ConfirmDialogType } from "./ConfirmDialog";
@@ -135,6 +136,7 @@ const App: React.FC = () => (
         <Route path="/:username" element={<AppRoutes />} />
         <Route path=":username/plan/:planName" element={<PlanDetailsWrapper />} />
         <Route path="/:username/plan/:planName" element={<PlanDetailsWrapper />} />
+        <Route path="/features" element={<FeaturePage />} />
       </Routes>
     </BrowserRouter>
   </ConfirmDialogProvider>

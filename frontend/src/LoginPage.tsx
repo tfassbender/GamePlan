@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./LoginPage.css";
 import { getVersion } from "./common/api";
 import { FaSignInAlt, FaUserPlus } from 'react-icons/fa';
+import { useNavigate } from "react-router-dom";
 
 interface LoginPageProps {
   onLogin: (username: string) => void | Promise<void>;
@@ -13,6 +14,7 @@ interface LoginPageProps {
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp, error, loading }) => {
   const [username, setUsername] = useState("");
   const [version, setVersion] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     getVersion().then(setVersion).catch(() => setVersion(""));
@@ -66,6 +68,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp, error, loading
           <span className="login-menu-icon"><FaUserPlus /></span> Sign Up
         </button>
       </div>
+      <button className="features-link-btn" onClick={() => navigate('/features')} style={{ marginTop: '18px' }}>
+        Features
+      </button>
       {loading && <div className="login-loading">Loading...</div>}
       <div className="login-version-info">{version && `Version: ${version}`}</div>
     </div>

@@ -123,3 +123,16 @@
   align-items: center;
   font-size: 1.1em;
 }
+
+.features-link-btn {
+  background: none;
+  border: none;
+  color: #2196f3;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1em;
+  font-family: inherit;
+  padding: 0;
+  margin: 0;
+  display: block;
+}
