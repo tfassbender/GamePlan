@@ -135,6 +135,36 @@
   background: #d44;
 }
 
+.plan-stage-menu-move-row {
+  display: flex;
+  gap: 8px;
+}
+
+.plan-stage-menu-move-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 50%;
+  background: #00bfff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-family: 'Orbitron', Arial, sans-serif;
+  transition: background 0.2s;
+}
+
+.plan-stage-menu-move-btn:disabled {
+  background: #555;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.plan-stage-menu-move-btn:hover:not(:disabled) {
+  background: #0099cc;
+}
+
 .plan-stage-menu-popover {
   position: absolute;
   right: 0;
@@ -178,4 +208,17 @@
   margin-top: 0.5em;
   display: flex;
   gap: 0.5em;
+}
+
+.plan-stage-menu-icon {
+  display: inline-block;
+  margin-right: 0.5em;
+  font-size: 1.1em;
+  vertical-align: middle;
+}
+
+/* Remove margin for icons in move up/down buttons */
+.plan-stage-menu-move-btn .plan-stage-menu-icon {
+  margin-right: 0;
+  margin-bottom: -2px;
 }

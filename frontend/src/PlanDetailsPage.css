@@ -82,6 +82,13 @@
   background: #d44;
 }
 
+.plan-details-menu-icon {
+  display: inline-block;
+  margin-right: 0.5em;
+  font-size: 1.1em;
+  vertical-align: middle;
+}
+
 .plan-details-content {
   flex: 1 1 auto;
   padding: 1rem 1.5rem 1rem 1.5rem;

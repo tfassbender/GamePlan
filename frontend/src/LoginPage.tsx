@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./LoginPage.css";
 import { getVersion } from "./common/api";
+import { FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 
 interface LoginPageProps {
   onLogin: (username: string) => void | Promise<void>;
@@ -58,8 +59,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignUp, error, loading
         disabled={loading}
       />
       <div className="login-buttons">
-        <button onClick={handleLogin} disabled={loading}>Login</button>
-        <button onClick={handleSignUp} disabled={loading}>Sign Up</button>
+        <button className="login-btn" onClick={handleLogin} disabled={loading}>
+          <span className="login-menu-icon"><FaSignInAlt /></span> Login
+        </button>
+        <button className="login-btn login-btn-signup" onClick={handleSignUp} disabled={loading}>
+          <span className="login-menu-icon"><FaUserPlus /></span> Sign Up
+        </button>
       </div>
       {loading && <div className="login-loading">Loading...</div>}
       <div className="login-version-info">{version && `Version: ${version}`}</div>

@@ -4,6 +4,7 @@ import { getGames, getPlans, createPlan, deletePlan, getVersion } from "./common
 import { useConfirmDialog } from "./App";
 import { ConfirmDialogType } from "./ConfirmDialog";
 import "./DashboardPage.css";
+import { FaSignOutAlt, FaPlus, FaTrash } from 'react-icons/fa';
 
 interface DashboardPageProps {
   username: string;
@@ -94,7 +95,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
       </div>
       <div className="dashboard-header">
         <span className="dashboard-username">Logged in as: <b>{username}</b></span>
-        <button className="logout-btn" onClick={onLogout}>Logout</button>
+        <button className="logout-btn" onClick={onLogout}>
+          <span className="dashboard-menu-icon"><FaSignOutAlt /></span> Logout
+        </button>
       </div>
       {error && <div className="dashboard-error">{error}</div>}
       {loading ? (
@@ -110,7 +113,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
                 ))}
               </select>
               <button className="create-plan-btn" onClick={handleCreatePlan} disabled={!selectedGame || loading}>
-                New Plan
+                <span className="dashboard-menu-icon"><FaPlus /></span> New Plan
               </button>
             </div>
           </div>
@@ -118,7 +121,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ username, onLogout }) => 
             <div className="dashboard-plans-header">
               <h2 style={{ margin: 0 }}>Your Plans</h2>
               <button className="delete-all-btn" onClick={handleDeleteAll} disabled={plans.length === 0 || loading}>
-                Delete All
+                <span className="dashboard-menu-icon"><FaTrash /></span> Delete All
               </button>
             </div>
             {plans.length === 0 ? (

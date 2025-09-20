@@ -5,6 +5,7 @@ import { PlanStageDto, ResourceType, ResourceChangeValue, SimpleResourceChange, 
 import ResourceInput, { ResourceInputType } from "./resourceInputs/ResourceInput";
 import "./resourceInputs/ResourceInput.css";
 import { calculatePlanResources } from "./common/planResourceUtils";
+import { FaPlus, FaArrowUp, FaArrowDown, FaBroom, FaTrash } from 'react-icons/fa';
 
 interface PlanStageEditorProps {
   index: number;
@@ -20,6 +21,8 @@ interface PlanStageEditorProps {
   resourceInputVisibility?: Record<string, boolean>;
   toggleResourceInputVisibility?: (resource: string) => void;
   setAllResourceInputsVisibility?: (visible: boolean) => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
 }
 
 const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
@@ -35,7 +38,9 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
   dragHandleProps,
   resourceInputVisibility,
   toggleResourceInputVisibility,
-  setAllResourceInputsVisibility
+  setAllResourceInputsVisibility,
+  onMoveUp,
+  onMoveDown
 }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [menuPosition, setMenuPosition] = React.useState<{top: number, left: number} | null>(null);
@@ -62,6 +67,15 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
   const handleDelete = () => {
     setMenuOpen(false);
     if (onDelete) onDelete();
+  };
+  // Move up/down handlers
+  const handleMoveUp = () => {
+    setMenuOpen(false);
+    if (onMoveUp) onMoveUp();
+  };
+  const handleMoveDown = () => {
+    setMenuOpen(false);
+    if (onMoveDown) onMoveDown();
   };
 
   const openMenu = (e: React.MouseEvent) => {
@@ -140,10 +154,26 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
               zIndex: 2001
             }}
           >
-            <button onClick={handleAddBefore}>Add Stage Before</button>
-            <button onClick={handleAddAfter}>Add Stage After</button>
-            <button onClick={handleClear}>Clear Stage</button>
-            <button onClick={handleDelete} className="plan-stage-menu-delete-btn">Delete Stage</button>
+            <button onClick={handleAddBefore}>
+              <span className="plan-stage-menu-icon"><FaPlus /></span> Add Stage Before
+            </button>
+            <button onClick={handleAddAfter}>
+              <span className="plan-stage-menu-icon"><FaPlus /></span> Add Stage After
+            </button>
+            <div className="plan-stage-menu-move-row">
+              <button className="plan-stage-menu-move-btn" onClick={handleMoveUp} aria-label="Move Up">
+                <span className="plan-stage-menu-icon"><FaArrowUp /></span>
+              </button>
+              <button className="plan-stage-menu-move-btn" onClick={handleMoveDown} aria-label="Move Down">
+                <span className="plan-stage-menu-icon"><FaArrowDown /></span>
+              </button>
+            </div>
+            <button onClick={handleClear}>
+              <span className="plan-stage-menu-icon"><FaBroom /></span> Clear Stage
+            </button>
+            <button onClick={handleDelete} className="plan-stage-menu-delete-btn">
+              <span className="plan-stage-menu-icon"><FaTrash /></span> Delete Stage
+            </button>
           </div>
         </>,
         document.body
@@ -258,3 +288,4 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
 };
 
 export default PlanStageEditor;
+

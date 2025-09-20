@@ -21,7 +21,7 @@
 
 .login-buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   width: 100%;
   max-width: 300px;
 }
@@ -71,4 +71,55 @@
   font-family: 'Orbitron', Arial, sans-serif;
   letter-spacing: 0.5px;
   pointer-events: none;
+}
+
+.login-btn {
+  background: #00bfff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  font-family: 'Orbitron', Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+.login-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #4e8cff;
+}
+
+.login-btn:hover:not(:disabled) {
+  background: #007bb5;
+}
+
+.login-btn:disabled {
+  background: #555;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.login-btn-signup {
+  background: #249c2b;
+}
+
+.login-btn-signup:hover:not(:disabled) {
+  background: #17661a;
+}
+
+.login-btn-signup:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #249c2b;
+}
+
+.login-menu-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
 }

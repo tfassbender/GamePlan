@@ -10,6 +10,7 @@ import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from "@dnd-kit/sortable";
 import ResourceInput, { ResourceInputType } from "./resourceInputs/ResourceInput";
 import "./resourceInputs/ResourceInput.css";
+import { FaArrowLeft, FaPlus, FaEye, FaEyeSlash, FaClone, FaTrash } from 'react-icons/fa';
 
 interface PlanDetailsPageProps {
   username: string;
@@ -254,8 +255,8 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
         {menuOpen && (
           <div className="plan-details-menu-overlay" onClick={() => setMenuOpen(false)}>
             <div className="plan-details-menu" onClick={e => e.stopPropagation()}>
-              <button onClick={onBack}>Back</button>
-              <button onClick={handleAddStage}>Add stage</button>
+              <button onClick={onBack}><span className="plan-details-menu-icon"><FaArrowLeft /></span> Back</button>
+              <button onClick={handleAddStage}><span className="plan-details-menu-icon"><FaPlus /></span> Add stage</button>
               {plan && plan.stages.length > 0 && plan.resourceTypes && (
                 <>
                   <button
@@ -264,7 +265,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                       setMenuOpen(false);
                     }}
                   >
-                    Show All Inputs
+                    <span className="plan-details-menu-icon"><FaEye /></span> Show All Inputs
                   </button>
                   <button
                     onClick={() => {
@@ -272,12 +273,12 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                       setMenuOpen(false);
                     }}
                   >
-                    Hide All Inputs
+                    <span className="plan-details-menu-icon"><FaEyeSlash /></span> Hide All Inputs
                   </button>
                 </>
               )}
-              <button onClick={handleClone}>Clone</button>
-              <button onClick={handleDelete} className="plan-details-delete-btn">Delete</button>
+              <button onClick={handleClone}><span className="plan-details-menu-icon"><FaClone /></span> Clone</button>
+              <button onClick={handleDelete} className="plan-details-delete-btn"><span className="plan-details-menu-icon"><FaTrash /></span> Delete</button>
             </div>
           </div>
         )}
@@ -346,6 +347,16 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                         resourceInputVisibility={resourceInputVisibility[idx] ?? {}}
                         toggleResourceInputVisibility={(resource: string) => toggleResourceInputVisibility(idx, resource)}
                         setAllResourceInputsVisibility={(visible: boolean) => setAllResourceInputsVisibility(idx, visible)}
+                        onMoveUp={idx > 0 ? () => {
+                          const newStages = [...plan.stages];
+                          [newStages[idx - 1], newStages[idx]] = [newStages[idx], newStages[idx - 1]];
+                          setPlan({ ...plan, stages: newStages });
+                        } : undefined}
+                        onMoveDown={idx < plan.stages.length - 1 ? () => {
+                          const newStages = [...plan.stages];
+                          [newStages[idx], newStages[idx + 1]] = [newStages[idx + 1], newStages[idx]];
+                          setPlan({ ...plan, stages: newStages });
+                        } : undefined}
                       />
                     );
                   })}
