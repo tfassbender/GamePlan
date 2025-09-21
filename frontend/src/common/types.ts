@@ -15,8 +15,8 @@ export interface PlanDto {
 
 export enum ResourceType {
   SIMPLE = "SIMPLE",
-  TM_POWER = "TM_POWER",
-  TM_CULTS = "TM_CULTS"
+  TERRA_MYSTICA_POWER = "TERRA_MYSTICA_POWER",
+  TERRA_MYSTICA_CULTS = "TERRA_MYSTICA_CULTS"
   // Add more types as needed
 }
 
@@ -28,7 +28,7 @@ export interface SimpleResourceChange {
 }
 
 export interface PowerResourceChange {
-  type: "tm_power";
+  type: "terra_mystica_power";
   bowl1: number;
   bowl2: number;
   bowl3: number;
@@ -38,7 +38,7 @@ export interface PowerResourceChange {
 }
 
 export interface TerraMysticaCultsResourceChange {
-  type: "tm_cults";
+  type: "terra_mystica_cults";
   fire: number;
   water: number;
   earth: number;

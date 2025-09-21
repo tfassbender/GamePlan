@@ -23,9 +23,9 @@ export function calculatePlanResources(
     const val = initialResources[key];
     if (val && typeof val === "object" && "type" in val && val.type === "simple") {
       resources[key] = { type: "simple", value: val.value };
-    } else if (val && typeof val === "object" && "type" in val && val.type === "tm_power") {
+    } else if (val && typeof val === "object" && "type" in val && val.type === "terra_mystica_power") {
       resources[key] = {
-        type: "tm_power",
+        type: "terra_mystica_power",
         bowl1: val.bowl1,
         bowl2: val.bowl2,
         bowl3: val.bowl3,
@@ -33,9 +33,9 @@ export function calculatePlanResources(
         burn: val.burn ?? 0,
         use: val.use ?? 0
       };
-    } else if (val && typeof val === "object" && "type" in val && val.type === "tm_cults") {
+    } else if (val && typeof val === "object" && "type" in val && val.type === "terra_mystica_cults") {
       resources[key] = {
-        type: "tm_cults",
+        type: "terra_mystica_cults",
         fire: val.fire,
         water: val.water,
         earth: val.earth,
@@ -54,10 +54,10 @@ export function calculatePlanResources(
         resources[key] = { type: "simple", value: newValue };
         if (!allowNegative && newValue < 0) isValid = false;
       }
-      if (change && typeof change === "object" && "type" in change && change.type === "tm_power") {
+      if (change && typeof change === "object" && "type" in change && change.type === "terra_mystica_power") {
         let { bowl1, bowl2, bowl3, gain, burn, use } = change;
         // If all bowl inputs are zero, do not set the bowls, use previous values
-        let prevPower = resources[key] && resources[key].type === "tm_power" ? resources[key] : { bowl1: 0, bowl2: 0, bowl3: 0 };
+        let prevPower = resources[key] && resources[key].type === "terra_mystica_power" ? resources[key] : { bowl1: 0, bowl2: 0, bowl3: 0 };
         let newBowl1, newBowl2, newBowl3;
         if ((bowl1 === 0) && (bowl2 === 0) && (bowl3 === 0)) {
           newBowl1 = prevPower.bowl1;
@@ -90,7 +90,7 @@ export function calculatePlanResources(
           newBowl1++;
         }
         resources[key] = {
-          type: "tm_power",
+          type: "terra_mystica_power",
           bowl1: newBowl1,
           bowl2: newBowl2,
           bowl3: newBowl3,
@@ -100,8 +100,8 @@ export function calculatePlanResources(
         };
         if (!allowNegative && (newBowl1 < 0 || newBowl2 < 0 || newBowl3 < 0)) isValid = false;
       }
-      if (change && typeof change === "object" && "type" in change && change.type === "tm_cults") {
-        const prev = resources[key] && resources[key].type === "tm_cults"
+      if (change && typeof change === "object" && "type" in change && change.type === "terra_mystica_cults") {
+        const prev = resources[key] && resources[key].type === "terra_mystica_cults"
           ? resources[key]
           : { fire: 0, water: 0, earth: 0, air: 0 };
         const newFire = prev.fire + change.fire;
@@ -109,7 +109,7 @@ export function calculatePlanResources(
         const newEarth = prev.earth + change.earth;
         const newAir = prev.air + change.air;
         resources[key] = {
-          type: "tm_cults",
+          type: "terra_mystica_cults",
           fire: newFire,
           water: newWater,
           earth: newEarth,

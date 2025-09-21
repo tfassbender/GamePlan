@@ -195,14 +195,14 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
         ).map(resource => {
           const resourceChange = stage.resourceChanges[resource];
           let value: any = 0;
-          if (resourceTypes[resource] === ResourceType.TM_POWER) {
-            value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "tm_power")
+          if (resourceTypes[resource] === ResourceType.TERRA_MYSTICA_POWER) {
+            value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "terra_mystica_power")
               ? resourceChange
-              : { type: "tm_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
-          } else if (resourceTypes[resource] === ResourceType.TM_CULTS) {
-            value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "tm_cults")
+              : { type: "terra_mystica_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
+          } else if (resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS) {
+            value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "terra_mystica_cults")
               ? resourceChange
-              : { type: "tm_cults", fire: 0, water: 0, earth: 0, air: 0 };
+              : { type: "terra_mystica_cults", fire: 0, water: 0, earth: 0, air: 0 };
           } else {
             value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "simple")
               ? resourceChange.value
@@ -213,10 +213,10 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
               ...stage,
               resourceChanges: {
                 ...stage.resourceChanges,
-                [resource]: resourceTypes[resource] === ResourceType.TM_POWER
-                  ? { type: "tm_power", ...newValue }
-                  : resourceTypes[resource] === ResourceType.TM_CULTS
-                  ? { type: "tm_cults", ...newValue }
+                [resource]: resourceTypes[resource] === ResourceType.TERRA_MYSTICA_POWER
+                  ? { type: "terra_mystica_power", ...newValue }
+                  : resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS
+                  ? { type: "terra_mystica_cults", ...newValue }
                   : { type: "simple", value: newValue }
               }
             });
@@ -228,12 +228,12 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
             <ResourceInput
               key={resource}
               resource={resource}
-              value={resourceTypes[resource] === ResourceType.TM_CULTS ? { fire: value.fire, water: value.water, earth: value.earth, air: value.air } : value}
+              value={resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS ? { fire: value.fire, water: value.water, earth: value.earth, air: value.air } : value}
               onChange={handleResourceChange}
-              type={resourceTypes[resource] === ResourceType.TM_POWER
-                ? ResourceInputType.TM_POWER
-                : resourceTypes[resource] === ResourceType.TM_CULTS
-                ? ResourceInputType.TM_CULTS
+              type={resourceTypes[resource] === ResourceType.TERRA_MYSTICA_POWER
+                ? ResourceInputType.TERRA_MYSTICA_POWER
+                : resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS
+                ? ResourceInputType.TERRA_MYSTICA_CULTS
                 : ResourceInputType.SIMPLE}
               showDetails={showDetails}
               onToggleShowDetails={onToggleShowDetails}
@@ -259,13 +259,13 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                   if (res && typeof res === "object" && "type" in res) {
                     if (res.type === "simple") {
                       return res.value;
-                    } else if (res.type === "tm_power") {
+                    } else if (res.type === "terra_mystica_power") {
                       return (
                         <span className="plan-details-power-purple">
                           {`${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`}
                         </span>
                       );
-                    } else if (res.type === "tm_cults") {
+                    } else if (res.type === "terra_mystica_cults") {
                       return (
                         <>
                           <span className="plan-details-cults-fire">{res.fire}</span>

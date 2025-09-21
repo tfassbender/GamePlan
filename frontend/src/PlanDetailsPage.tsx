@@ -75,8 +75,8 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
   }, [plan, plan?.resourceTypes]);
 
   const createEmptyResourceChange = (type: ResourceType): ResourceChangeValue => {
-    if (type === ResourceType.TM_POWER) {
-      return { type: "tm_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
+    if (type === ResourceType.TERRA_MYSTICA_POWER) {
+      return { type: "terra_mystica_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
     }
     return { type: "simple", value: 0 };
   };
@@ -397,13 +397,13 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                     if (res && typeof res === "object" && "type" in res) {
                       if (res.type === "simple") {
                         return res.value;
-                      } else if (res.type === "tm_power") {
+                      } else if (res.type === "terra_mystica_power") {
                         return (
                           <span className="plan-details-power-purple">
                             {`${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`}
                           </span>
                         );
-                      } else if (res.type === "tm_cults") {
+                      } else if (res.type === "terra_mystica_cults") {
                         return (
                           <>
                             <span className="plan-details-cults-fire">{res.fire}</span>

@@ -6,8 +6,8 @@
     "Gold": "SIMPLE",
     "Workers": "SIMPLE",
     "Priests": "SIMPLE",
-    "Power": "TM_POWER",
-    "Cults": "TM_CULTS"
+    "Power": "TERRA_MYSTICA_POWER",
+    "Cults": "TERRA_MYSTICA_CULTS"
   },
   "resourceOrder": [
     "Points",
@@ -37,13 +37,13 @@
         "value": 0
       },
       "Power": {
-        "type": "tm_power",
+        "type": "terra_mystica_power",
         "bowl1": 5,
         "bowl2": 7,
         "bowl3": 0
       },
       "Cults": {
-        "type": "tm_cults",
+        "type": "terra_mystica_cults",
         "fire": 0,
         "water": 0,
         "earth": 0,

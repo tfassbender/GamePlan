@@ -4,11 +4,11 @@ import ResourceInputCults from "./ResourceInputCults";
 
 export enum ResourceInputType {
   SIMPLE = "SIMPLE",
-  TM_POWER = "TM_POWER", // power resource in Terra Mystica
-  TM_CULTS = "TM_CULTS" // cults resource in Terra Mystica
+  TERRA_MYSTICA_POWER = "TERRA_MYSTICA_POWER", //
+  TERRA_MYSTICA_CULTS = "TERRA_MYSTICA_CULTS" //
 }
 
-// Type for TM_CULTS
+// Type for TERRA_MYSTICA_CULTS
 export interface CultsValue {
   fire: number;
   water: number;
@@ -16,7 +16,7 @@ export interface CultsValue {
   air: number;
 }
 
-// Type for TM_POWER
+// Type for TERRA_MYSTICA_POWER
 export interface PowerValue {
   bowl1: number;
   bowl2: number;
@@ -40,7 +40,7 @@ export type ResourceInputProps =
       resource: string;
       value: PowerValue;
       onChange: (value: PowerValue) => void;
-      type: ResourceInputType.TM_POWER;
+      type: ResourceInputType.TERRA_MYSTICA_POWER;
       showDetails?: boolean;
       onToggleShowDetails?: () => void;
     }
@@ -48,18 +48,18 @@ export type ResourceInputProps =
       resource: string;
       value: CultsValue;
       onChange: (value: CultsValue) => void;
-      type: ResourceInputType.TM_CULTS;
+      type: ResourceInputType.TERRA_MYSTICA_CULTS;
       showDetails?: boolean;
       onToggleShowDetails?: () => void;
     };
 
 const ResourceInput: React.FC<ResourceInputProps> = (props) => {
   const { resource, showDetails = true, onToggleShowDetails } = props;
-  if (props.type === ResourceInputType.TM_POWER) {
+  if (props.type === ResourceInputType.TERRA_MYSTICA_POWER) {
     const value = props.value as PowerValue;
     return <ResourceInputPower resource={resource} value={value} onChange={props.onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails!} />;
   }
-  if (props.type === ResourceInputType.TM_CULTS) {
+  if (props.type === ResourceInputType.TERRA_MYSTICA_CULTS) {
     const value = props.value as CultsValue;
     return <ResourceInputCults resource={resource} value={value} onChange={props.onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails!} />;
   }

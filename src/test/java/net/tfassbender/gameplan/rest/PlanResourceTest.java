@@ -564,7 +564,7 @@ public class PlanResourceTest {
               "stages": [
                 {
                   "description": "Stage 1",
-                  "resourceChanges": {"TM_POWER": {"type": "tm_power", "bowl1": 1, "bowl2": 2, "bowl3": 3}}
+                  "resourceChanges": {"TERRA_MYSTICA_POWER": {"type": "terra_mystica_power", "bowl1": 1, "bowl2": 2, "bowl3": 3}}
                 }
               ]
             }
@@ -578,8 +578,8 @@ public class PlanResourceTest {
       PlanDto planDto = response.body().as(PlanDto.class);
       assertThat(planDto.name, is(planName));
       assertThat(planDto.stages, hasSize(1));
-      assertThat(planDto.stages.get(0).resourceChanges.get("TM_POWER"), instanceOf(TerraMysticaPowerResourceChange.class));
-      TerraMysticaPowerResourceChange power = (TerraMysticaPowerResourceChange) planDto.stages.get(0).resourceChanges.get("TM_POWER");
+      assertThat(planDto.stages.get(0).resourceChanges.get("TERRA_MYSTICA_POWER"), instanceOf(TerraMysticaPowerResourceChange.class));
+      TerraMysticaPowerResourceChange power = (TerraMysticaPowerResourceChange) planDto.stages.get(0).resourceChanges.get("TERRA_MYSTICA_POWER");
       assertThat(power.bowl1(), is(1));
       assertThat(power.bowl2(), is(2));
       assertThat(power.bowl3(), is(3));
