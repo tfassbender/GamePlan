@@ -1,11 +1,13 @@
 import React from "react";
 import ResourceInputPower from "./ResourceInputPower";
 import ResourceInputCults from "./ResourceInputCults";
+import ResourceInputSimpleCombined from "./ResourceInputSimpleCombined";
 
 export enum ResourceInputType {
   SIMPLE = "SIMPLE",
   TERRA_MYSTICA_POWER = "TERRA_MYSTICA_POWER", //
-  TERRA_MYSTICA_CULTS = "TERRA_MYSTICA_CULTS" //
+  TERRA_MYSTICA_CULTS = "TERRA_MYSTICA_CULTS", //
+  SIMPLE_COMBINED = "SIMPLE_COMBINED" //
 }
 
 // Type for TERRA_MYSTICA_CULTS
@@ -24,6 +26,12 @@ export interface PowerValue {
   gain: number;
   burn: number;
   use: number;
+}
+
+// Type for SIMPLE_COMBINED
+export interface SimpleCombinedResourceChangeValue {
+  resources: Record<string, number>;
+  colors?: Record<string, string>;
 }
 
 // Discriminated union for props
@@ -51,6 +59,14 @@ export type ResourceInputProps =
       type: ResourceInputType.TERRA_MYSTICA_CULTS;
       showDetails?: boolean;
       onToggleShowDetails?: () => void;
+    }
+  | {
+      resource: string;
+      value: SimpleCombinedResourceChangeValue;
+      onChange: (value: SimpleCombinedResourceChangeValue) => void;
+      type: ResourceInputType.SIMPLE_COMBINED;
+      showDetails?: boolean;
+      onToggleShowDetails?: () => void;
     };
 
 const ResourceInput: React.FC<ResourceInputProps> = (props) => {
@@ -62,6 +78,10 @@ const ResourceInput: React.FC<ResourceInputProps> = (props) => {
   if (props.type === ResourceInputType.TERRA_MYSTICA_CULTS) {
     const value = props.value as CultsValue;
     return <ResourceInputCults resource={resource} value={value} onChange={props.onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails!} />;
+  }
+  if (props.type === ResourceInputType.SIMPLE_COMBINED) {
+    const value = props.value as SimpleCombinedResourceChangeValue;
+    return <ResourceInputSimpleCombined resource={resource} value={value} onChange={props.onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails!} />;
   }
   // SIMPLE
   const value = props.value as number;

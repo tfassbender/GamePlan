@@ -74,31 +74,67 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
     });
   }, [plan, plan?.resourceTypes]);
 
-  const createEmptyResourceChange = (type: ResourceType): ResourceChangeValue => {
+  const createEmptyResourceChange = (
+    type: ResourceType,
+    resources: Record<string, number> = {},
+    colors: Record<string, string> = {}
+  ): ResourceChangeValue => {
     if (type === ResourceType.TERRA_MYSTICA_POWER) {
       return { type: "terra_mystica_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
+    }
+    if (type === ResourceType.SIMPLE_COMBINED) {
+      // Set all resource values to 0, keep keys
+      const zeroedResources = Object.fromEntries(Object.keys(resources).map(key => [key, 0]));
+      return { type: "simple_combined", resources: zeroedResources, colors };
     }
     return { type: "simple", value: 0 };
   };
 
   const handleAddStage = () => {
     if (!plan) return;
+    const prevStage = plan.stages[plan.stages.length - 1];
     const newStage = {
       description: "",
       resourceChanges: Object.fromEntries(
-        Object.entries(plan.resourceTypes).map(([r, t]) => [r, createEmptyResourceChange(t)])
+        Object.entries(plan.resourceTypes).map(([r, t]) => {
+          let resources = {};
+          let colors = {};
+          if (prevStage && prevStage.resourceChanges[r] && prevStage.resourceChanges[r].type === "simple_combined") {
+            resources = prevStage.resourceChanges[r].resources || {};
+            colors = prevStage.resourceChanges[r].colors || {};
+          }
+          return [r, createEmptyResourceChange(t, resources, colors)];
+        })
       )
     };
-    setPlan({ ...plan, stages: [...plan.stages, newStage] });
+    setPlan({
+      ...plan,
+      stages: [...plan.stages, newStage],
+      name: plan.name,
+      gameName: plan.gameName,
+      description: plan.description,
+      lastModified: plan.lastModified,
+      resourceTypes: plan.resourceTypes,
+      resourceOrder: plan.resourceOrder
+    });
     setMenuOpen(false);
   };
 
   const handleAddStageBefore = (idx: number) => {
     if (!plan) return;
+    const prevStage = plan.stages[idx - 1];
     const newStage = {
       description: "",
       resourceChanges: Object.fromEntries(
-        Object.entries(plan.resourceTypes).map(([r, t]) => [r, createEmptyResourceChange(t)])
+        Object.entries(plan.resourceTypes).map(([r, t]) => {
+          let resources = {};
+          let colors = {};
+          if (prevStage && prevStage.resourceChanges[r] && prevStage.resourceChanges[r].type === "simple_combined") {
+            resources = prevStage.resourceChanges[r].resources || {};
+            colors = prevStage.resourceChanges[r].colors || {};
+          }
+          return [r, createEmptyResourceChange(t, resources, colors)];
+        })
       )
     };
     setPlan({
@@ -107,16 +143,31 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
         ...plan.stages.slice(0, idx),
         newStage,
         ...plan.stages.slice(idx)
-      ]
+      ],
+      name: plan.name,
+      gameName: plan.gameName,
+      description: plan.description,
+      lastModified: plan.lastModified,
+      resourceTypes: plan.resourceTypes,
+      resourceOrder: plan.resourceOrder
     });
   };
 
   const handleAddStageAfter = (idx: number) => {
     if (!plan) return;
+    const prevStage = plan.stages[idx];
     const newStage = {
       description: "",
       resourceChanges: Object.fromEntries(
-        Object.entries(plan.resourceTypes).map(([r, t]) => [r, createEmptyResourceChange(t)])
+        Object.entries(plan.resourceTypes).map(([r, t]) => {
+          let resources = {};
+          let colors = {};
+          if (prevStage && prevStage.resourceChanges[r] && prevStage.resourceChanges[r].type === "simple_combined") {
+            resources = prevStage.resourceChanges[r].resources || {};
+            colors = prevStage.resourceChanges[r].colors || {};
+          }
+          return [r, createEmptyResourceChange(t, resources, colors)];
+        })
       )
     };
     setPlan({
@@ -125,7 +176,13 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
         ...plan.stages.slice(0, idx + 1),
         newStage,
         ...plan.stages.slice(idx + 1)
-      ]
+      ],
+      name: plan.name,
+      gameName: plan.gameName,
+      description: plan.description,
+      lastModified: plan.lastModified,
+      resourceTypes: plan.resourceTypes,
+      resourceOrder: plan.resourceOrder
     });
   };
 
@@ -184,22 +241,43 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
           index={idx}
           stage={stage}
           dragHandleProps={{ ...attributes, ...listeners }}
-          resourceTypes={plan?.resourceTypes ?? {}}
-          resourceOrder={plan?.resourceOrder ?? []}
+          resourceTypes={plan ? plan.resourceTypes : {}}
+          resourceOrder={plan ? plan.resourceOrder : []}
           onChange={(updatedStage: PlanStageDto) => {
             if (!plan) return;
             const newStages = plan.stages.map((s: PlanStageDto, i: number) => i === idx ? updatedStage : s);
             setPlan({
               ...plan,
               stages: newStages,
-              name: plan.name ?? "",
-              gameName: plan.gameName ?? "",
-              description: plan.description ?? "",
-              lastModified: plan.lastModified ?? "",
-              resourceTypes: plan.resourceTypes ?? {},
-              resourceOrder: plan.resourceOrder ?? [],
+              name: plan.name,
+              gameName: plan.gameName,
+              description: plan.description,
+              lastModified: plan.lastModified,
+              resourceTypes: plan.resourceTypes,
+              resourceOrder: plan.resourceOrder
             });
           }}
+          onAddBefore={() => handleAddStageBefore(idx)}
+          onAddAfter={() => handleAddStageAfter(idx)}
+          onDelete={() => {
+            if (!plan) return;
+            setPlan({
+              ...plan,
+              stages: plan.stages.filter((_, i) => i !== idx),
+              name: plan.name,
+              gameName: plan.gameName,
+              description: plan.description,
+              lastModified: plan.lastModified,
+              resourceTypes: plan.resourceTypes,
+              resourceOrder: plan.resourceOrder
+            });
+          }}
+          resourceInputVisibility={resourceInputVisibility[idx] ?? {}}
+          toggleResourceInputVisibility={(resource: string) => toggleResourceInputVisibility(idx, resource)}
+          setAllResourceInputsVisibility={(visible: boolean) => setAllResourceInputsVisibility(idx, visible)}
+          onMoveUp={idx > 0 ? () => handleMoveUp(idx) : undefined}
+          onMoveDown={idx < (plan ? plan.stages.length - 1 : 0) ? () => handleMoveDown(idx) : undefined}
+          isOnlyStage={plan ? plan.stages.length === 1 : false}
           {...rest}
         />
       </div>
@@ -369,6 +447,7 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                         setAllResourceInputsVisibility={(visible: boolean) => setAllResourceInputsVisibility(idx, visible)}
                         onMoveUp={idx > 0 ? () => handleMoveUp(idx) : undefined}
                         onMoveDown={idx < plan.stages.length - 1 ? () => handleMoveDown(idx) : undefined}
+                        isOnlyStage={plan.stages.length === 1}
                       />
                     );
                   })}
@@ -410,6 +489,20 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                             -<span className="plan-details-cults-water">{res.water}</span>
                             -<span className="plan-details-cults-earth">{res.earth}</span>
                             -<span className="plan-details-cults-air">{res.air}</span>
+                          </>
+                        );
+                      } else if (res.type === "simple_combined") {
+                        const entries = Object.entries(res.resources || {});
+                        return (
+                          <>
+                            {entries.map(([key, val], idx) => (
+                              <React.Fragment key={key}>
+                                <span
+                                  style={{ color: res.colors && res.colors[key] ? res.colors[key] : undefined, fontWeight: 'bold' }}
+                                >{val}</span>
+                                {idx < entries.length - 1 && <span>-</span>}
+                              </React.Fragment>
+                            ))}
                           </>
                         );
                       }

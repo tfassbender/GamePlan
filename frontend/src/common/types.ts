@@ -15,12 +15,13 @@ export interface PlanDto {
 
 export enum ResourceType {
   SIMPLE = "SIMPLE",
+  SIMPLE_COMBINED = "SIMPLE_COMBINED",
   TERRA_MYSTICA_POWER = "TERRA_MYSTICA_POWER",
   TERRA_MYSTICA_CULTS = "TERRA_MYSTICA_CULTS"
   // Add more types as needed
 }
 
-export type ResourceChangeValue = SimpleResourceChange | PowerResourceChange | TerraMysticaCultsResourceChange;
+export type ResourceChangeValue = SimpleResourceChange | PowerResourceChange | TerraMysticaCultsResourceChange | SimpleCombinedResourceChange;
 
 export interface SimpleResourceChange {
   type: "simple";
@@ -43,4 +44,10 @@ export interface TerraMysticaCultsResourceChange {
   water: number;
   earth: number;
   air: number;
+}
+
+export interface SimpleCombinedResourceChange {
+  type: "simple_combined";
+  resources: Record<string, number>;
+  colors: Record<string, string>;
 }

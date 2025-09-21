@@ -41,6 +41,12 @@ export function calculatePlanResources(
         earth: val.earth,
         air: val.air
       };
+    } else if (val && typeof val === "object" && "type" in val && val.type === "simple_combined") {
+      resources[key] = {
+        type: "simple_combined",
+        resources: { ...val.resources },
+        colors: val.colors ? { ...val.colors } : {} // Always assign an object
+      };
     }
   }
   let isValid = true;
@@ -116,6 +122,27 @@ export function calculatePlanResources(
           air: newAir
         };
         if (!allowNegative && (newFire < 0 || newWater < 0 || newEarth < 0 || newAir < 0)) isValid = false;
+      }
+      if (change && typeof change === "object" && "type" in change && change.type === "simple_combined") {
+        const prev = resources[key] && resources[key].type === "simple_combined"
+          ? resources[key].resources
+          : {};
+        const newResources: Record<string, number> = {};
+        for (const resKey in change.resources) {
+          newResources[resKey] = (prev[resKey] || 0) + change.resources[resKey];
+          if (!allowNegative && newResources[resKey] < 0) isValid = false;
+        }
+        // Also keep any resource keys from prev that are not in change
+        for (const resKey in prev) {
+          if (!(resKey in newResources)) {
+            newResources[resKey] = prev[resKey];
+          }
+        }
+        resources[key] = {
+          type: "simple_combined",
+          resources: newResources,
+          colors: change.type === "simple_combined" && change.colors ? { ...change.colors } : (resources[key] && resources[key].type === "simple_combined" ? resources[key].colors : {})
+        };
       }
     }
   }

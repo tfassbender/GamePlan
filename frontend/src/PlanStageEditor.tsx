@@ -23,6 +23,7 @@ interface PlanStageEditorProps {
   setAllResourceInputsVisibility?: (visible: boolean) => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
+  isOnlyStage?: boolean;
 }
 
 const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
@@ -40,7 +41,8 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
   toggleResourceInputVisibility,
   setAllResourceInputsVisibility,
   onMoveUp,
-  onMoveDown
+  onMoveDown,
+  isOnlyStage = false,
 }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [menuPosition, setMenuPosition] = React.useState<{top: number, left: number} | null>(null);
@@ -60,13 +62,43 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
     setMenuOpen(false);
     if (onAddAfter) onAddAfter();
   };
+  function clearStageResources(stage: PlanStageDto, resourceTypes: Record<string, ResourceType>): Record<string, ResourceChangeValue> {
+    const clearedResourceChanges: Record<string, ResourceChangeValue> = {};
+    Object.entries(stage.resourceChanges).forEach(([key, value]) => {
+      if (value && typeof value === "object" && value.type === "simple_combined") {
+        clearedResourceChanges[key] = {
+          ...value,
+          resources: Object.fromEntries(Object.keys(value.resources || {}).map(k => [k, 0]))
+        };
+      } else {
+        const type = resourceTypes[key];
+        if (type === ResourceType.SIMPLE) {
+          clearedResourceChanges[key] = { type: "simple", value: 0 };
+        } else if (type === ResourceType.TERRA_MYSTICA_POWER) {
+          clearedResourceChanges[key] = { type: "terra_mystica_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
+        } else if (type === ResourceType.TERRA_MYSTICA_CULTS) {
+          clearedResourceChanges[key] = { type: "terra_mystica_cults", fire: 0, water: 0, earth: 0, air: 0 };
+        } else {
+          clearedResourceChanges[key] = value as ResourceChangeValue;
+        }
+      }
+    });
+    return clearedResourceChanges;
+  }
+
   const handleClear = () => {
     setMenuOpen(false);
-    onChange({ ...stage, description: "", resourceChanges: {} });
+    const clearedResourceChanges = clearStageResources(stage, resourceTypes);
+    onChange({ ...stage, description: "", resourceChanges: clearedResourceChanges });
   };
   const handleDelete = () => {
     setMenuOpen(false);
-    if (onDelete) onDelete();
+    if (isOnlyStage) {
+      const clearedResourceChanges = clearStageResources(stage, resourceTypes);
+      onChange({ ...stage, description: "", resourceChanges: clearedResourceChanges });
+    } else if (onDelete) {
+      onDelete();
+    }
   };
   // Move up/down handlers
   const handleMoveUp = () => {
@@ -203,6 +235,10 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
             value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "terra_mystica_cults")
               ? resourceChange
               : { type: "terra_mystica_cults", fire: 0, water: 0, earth: 0, air: 0 };
+          } else if (resourceTypes[resource] === ResourceType.SIMPLE_COMBINED) {
+            value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "simple_combined")
+              ? resourceChange
+              : { type: "simple_combined", resources: {}, colors: {} };
           } else {
             value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "simple")
               ? resourceChange.value
@@ -217,6 +253,8 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                   ? { type: "terra_mystica_power", ...newValue }
                   : resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS
                   ? { type: "terra_mystica_cults", ...newValue }
+                  : resourceTypes[resource] === ResourceType.SIMPLE_COMBINED
+                  ? { type: "simple_combined", ...newValue }
                   : { type: "simple", value: newValue }
               }
             });
@@ -228,12 +266,18 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
             <ResourceInput
               key={resource}
               resource={resource}
-              value={resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS ? { fire: value.fire, water: value.water, earth: value.earth, air: value.air } : value}
+              {...(resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS
+                ? { value: { fire: value.fire, water: value.water, earth: value.earth, air: value.air } }
+                : resourceTypes[resource] === ResourceType.SIMPLE_COMBINED
+                ? { value: { resources: value.resources, colors: value.colors } }
+                : { value })}
               onChange={handleResourceChange}
               type={resourceTypes[resource] === ResourceType.TERRA_MYSTICA_POWER
                 ? ResourceInputType.TERRA_MYSTICA_POWER
                 : resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS
                 ? ResourceInputType.TERRA_MYSTICA_CULTS
+                : resourceTypes[resource] === ResourceType.SIMPLE_COMBINED
+                ? ResourceInputType.SIMPLE_COMBINED
                 : ResourceInputType.SIMPLE}
               showDetails={showDetails}
               onToggleShowDetails={onToggleShowDetails}
@@ -274,6 +318,20 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                           -<span className="plan-details-cults-air">{res.air}</span>
                         </>
                       );
+                    } else if (res.type === "simple_combined") {
+                      const entries = Object.entries(res.resources || {});
+                      return (
+                        <>
+                          {entries.map(([key, val], idx) => (
+                            <React.Fragment key={key}>
+                              <span
+                                style={{ color: res.colors && res.colors[key] ? res.colors[key] : undefined, fontWeight: 'bold' }}
+                              >{val}</span>
+                              {idx < entries.length - 1 && <span>-</span>}
+                            </React.Fragment>
+                          ))}
+                        </>
+                      );
                     }
                   }
                   return 0;
@@ -288,4 +346,3 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
 };
 
 export default PlanStageEditor;
-
