@@ -1,0 +1,73 @@
+{
+  "name": "Karak 2",
+  "description": "Gather resources, build your fortress, and fend off the monsters in this strategic board game.",
+  "resources": {
+    "Points": "SIMPLE",
+    "Health": "SIMPLE",
+    "Resources": "SIMPLE_COMBINED",
+    "Troops": "SIMPLE_COMBINED",
+    "Troop Limit:": "SIMPLE",
+    "Weapons": "SIMPLE",
+    "Spells": "SIMPLE"
+  },
+  "resourceOrder": [
+    "Points",
+    "Health",
+    "Resources",
+    "Troops",
+    "Troop Limit:",
+    "Weapons",
+    "Spells"
+  ],
+  "defaultStartingResources": {
+    "description": "Game start resources (may differ for different fractions)",
+    "resourceChanges": {
+      "Points": {
+        "type": "simple",
+        "value": 0
+      },
+      "Health": {
+        "type": "simple",
+        "value": 5
+      },
+      "Resources": {
+        "type": "simple_combined",
+        "resources": {
+          "Wood": 0,
+          "Food": 0,
+          "Stone": 0
+        },
+        "colors": {
+          "Wood": "#156e03",
+          "Food": "#a6110c",
+          "Stone": "#6e6e6e"
+        }
+      },
+      "Troops": {
+        "type": "simple_combined",
+        "resources": {
+          "Soldiers": 0,
+          "Archers": 0,
+          "Mages": 0
+        },
+        "colors": {
+          "Soldiers": "#156e03",
+          "Archers": "#a6110c",
+          "Mages": "#6e6e6e"
+        }
+      },
+      "Troop Limit:": {
+        "type": "simple",
+        "value": 0
+      },
+      "Weapons": {
+        "type": "simple",
+        "value": 0
+      },
+      "Spells": {
+        "type": "simple",
+        "value": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "name": "Zwergar",
+  "description": "Dwarves, mine, points, this is Dwergar!",
+  "resources": {
+    "Points": "SIMPLE",
+    "Stoves": "SIMPLE",
+    "Heat": "SIMPLE",
+    "Workers": "SIMPLE_COMBINED",
+    "Materials": "SIMPLE_COMBINED"
+  },
+  "resourceOrder": [
+    "Points",
+    "Stoves",
+    "Heat",
+    "Workers",
+    "Materials"
+  ],
+  "defaultStartingResources": {
+    "description": "Game start resources (may differ for different player numbers)",
+    "resourceChanges": {
+      "Points": {
+        "type": "simple",
+        "value": 0
+      },
+      "Stoves": {
+        "type": "simple",
+        "value": 1
+      },
+      "Heat": {
+        "type": "simple",
+        "value": 0
+      },
+      "Workers": {
+        "type": "simple_combined",
+        "resources": {
+          "Master": 1,
+          "Engineer": 0,
+          "Blacksmith": 0,
+          "Miner": 0
+        },
+        "colors": {
+          "Master": "#e60000",
+          "Engineer": "#5a0178",
+          "Blacksmith": "#e6e6e6",
+          "Miner": "#fc8403"
+        }
+      },
+      "Materials": {
+        "type": "simple_combined",
+        "resources": {
+          "Stone": 1,
+          "Iron": 0,
+          "Gold": 0,
+          "Jewel": 0
+        },
+        "colors": {
+          "Stone": "#333333",
+          "Iron": "#bdbbbb",
+          "Gold": "#d4af37",
+          "Jewel": "#9726ad"
+        }
+      }
+    }
+  }
+}

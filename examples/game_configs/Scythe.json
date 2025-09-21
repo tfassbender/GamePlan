@@ -1,0 +1,88 @@
+{
+  "name": "Scythe",
+  "description": "A game about farming, war, and conquering territory in an alternate-history 1920s period.",
+  "resources": {
+    "Coin": "SIMPLE",
+    "Stars": "SIMPLE",
+    "Popularity": "SIMPLE",
+    "Power": "SIMPLE",
+    "Ammo": "SIMPLE_COMBINED",
+    "Units": "SIMPLE_COMBINED",
+    "Resources": "SIMPLE_COMBINED"
+  },
+  "resourceOrder": [
+    "Coin",
+    "Stars",
+    "Popularity",
+    "Power",
+    "Ammo",
+    "Units",
+    "Resources"
+  ],
+  "defaultStartingResources": {
+    "description": "Game start resources (may differ for different fractions)",
+    "resourceChanges": {
+      "Coin": {
+        "type": "simple",
+        "value": 3
+      },
+      "Stars": {
+        "type": "simple",
+        "value": 0
+      },
+      "Popularity": {
+        "type": "simple",
+        "value": 0
+      },
+      "Power": {
+        "type": "simple",
+        "value": 0
+      },
+      "Ammo": {
+        "type": "simple_combined",
+        "resources": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "colors": {
+          "2": "#ffe600",
+          "3": "#ffe600",
+          "4": "#ffe600",
+          "5": "#ffe600"
+        }
+      },
+      "Units": {
+        "type": "simple_combined",
+        "resources": {
+          "Leader": 1,
+          "Mech": 0,
+          "Workers": 2,
+          "Buildings": 0
+        },
+        "colors": {
+          "Leader": "#c90606",
+          "Mech": "#5c5c5c",
+          "Workers": "#155c02",
+          "Buildings": "#75390b"
+        }
+      },
+      "Resources": {
+        "type": "simple_combined",
+        "resources": {
+          "Food": 0,
+          "Wood": 0,
+          "Metal": 0,
+          "Oil": 0
+        },
+        "colors": {
+          "Food": "#d1c300",
+          "Wood": "#82580e",
+          "Metal": "#575757",
+          "Oil": "#1e2e66"
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "TerraMystica",
+  "name": "Terra Mystica",
   "description": "Terra Mystica is a deep strategy board game where players control unique fantasy factions, terraform landscapes, and build thriving civilizations while carefully managing resources and competing for territory.",
   "resources": {
     "Points": "SIMPLE",
@@ -7,7 +7,7 @@
     "Workers": "SIMPLE",
     "Priests": "SIMPLE",
     "Power": "TERRA_MYSTICA_POWER",
-    "Cults": "SIMPLE_COMBINED"
+    "Cults": "TERRA_MYSTICA_CULTS"
   },
   "resourceOrder": [
     "Points",
@@ -43,19 +43,11 @@
         "bowl3": 0
       },
       "Cults": {
-        "type": "simple_combined",
-        "resources": {
-          "Fire": 0,
-          "Water": 0,
-          "Earth": 0,
-          "Air": 0
-        },
-        "colors": {
-          "Fire": "#FF4500",
-          "Water": "#1E90FF",
-          "Earth": "#8B4513",
-          "Air": "#D3D3D3"
-        }
+        "type": "terra_mystica_cults",
+        "fire": 0,
+        "water": 0,
+        "earth": 0,
+        "air": 0
       }
     }
   }

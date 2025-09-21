@@ -1,0 +1,77 @@
+{
+  "name": "Gaia Project",
+  "description": "A spiritual successor to Terra Mystica, set in space with new factions and mechanics.",
+  "resources": {
+    "Points": "SIMPLE",
+    "Resources": "SIMPLE_COMBINED",
+    "Power": "TERRA_MYSTICA_POWER",
+    "Research": "SIMPLE_COMBINED",
+    "Alliances": "SIMPLE",
+    "Gaiaformers": "SIMPLE"
+  },
+  "resourceOrder": [
+    "Points",
+    "Resources",
+    "Power",
+    "Research",
+    "Alliances",
+    "Gaiaformers"
+  ],
+  "defaultStartingResources": {
+    "description": "Game start resources (for most fractions)",
+    "resourceChanges": {
+      "Points": {
+        "type": "simple",
+        "value": 20
+      },
+      "Resources": {
+        "type": "simple_combined",
+        "resources": {
+          "Coin": 15,
+          "Ore": 4,
+          "Wisdom": 4,
+          "Q.I.C.": 1
+        },
+        "colors": {
+          "Coin": "#ffd700",
+          "Ore": "#e6e6e6",
+          "Wisdom": "#00bbff",
+          "Q.I.C.": "#59b800"
+        }
+      },
+      "Power": {
+        "type": "terra_mystica_power",
+        "bowl1": 2,
+        "bowl2": 4,
+        "bowl3": 0
+      },
+      "Research": {
+        "type": "simple_combined",
+        "resources": {
+          "Terraforming": 0,
+          "Navigation": 0,
+          "Artificial Intelligence": 0,
+          "Gaiaforming": 0,
+          "Economy": 0,
+          "Science": 0
+        },
+        "colors": {
+          "Terraforming": "#82531d",
+          "Navigation": "#1c2b80",
+          "Artificial Intelligence": "#0f6b0e",
+          "Gaiaforming": "#95139c",
+          "Economy": "#e38109",
+          "Science": "#0264ed"
+        }
+      },
+      "Alliances": {
+        "type": "simple",
+        "value": 0
+      },
+      "Gaiaformers": {
+        "type": "simple",
+        "value": 0
+      }
+    }
+  }
+}
