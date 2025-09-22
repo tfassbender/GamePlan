@@ -6,7 +6,7 @@
     "Health": "SIMPLE",
     "Resources": "SIMPLE_COMBINED",
     "Troops": "SIMPLE_COMBINED",
-    "Troop Limit:": "SIMPLE",
+    "Troop Limit": "SIMPLE",
     "Weapons": "SIMPLE",
     "Spells": "SIMPLE"
   },
@@ -15,7 +15,7 @@
     "Health",
     "Resources",
     "Troops",
-    "Troop Limit:",
+    "Troop Limit",
     "Weapons",
     "Spells"
   ],
@@ -56,7 +56,7 @@
           "Mages": "#6e6e6e"
         }
       },
-      "Troop Limit:": {
+      "Troop Limit": {
         "type": "simple",
         "value": 0
       },

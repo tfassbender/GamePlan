@@ -11,8 +11,8 @@
   },
   "resourceOrder": [
     "Points",
-    "Resources",
     "Power",
+    "Resources",
     "Research",
     "Alliances",
     "Gaiaformers"
