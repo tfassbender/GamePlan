@@ -6,6 +6,7 @@ import ResourceInput, { ResourceInputType } from "./resourceInputs/ResourceInput
 import "./resourceInputs/ResourceInput.css";
 import { calculatePlanResources } from "./common/planResourceUtils";
 import { FaPlus, FaArrowUp, FaArrowDown, FaBroom, FaTrash } from 'react-icons/fa';
+import { isColorDark } from "./common/colorUtils";
 
 interface PlanStageEditorProps {
   index: number;
@@ -272,13 +273,7 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                 ? { value: { resources: value.resources, colors: value.colors } }
                 : { value })}
               onChange={handleResourceChange}
-              type={resourceTypes[resource] === ResourceType.TERRA_MYSTICA_POWER
-                ? ResourceInputType.TERRA_MYSTICA_POWER
-                : resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS
-                ? ResourceInputType.TERRA_MYSTICA_CULTS
-                : resourceTypes[resource] === ResourceType.SIMPLE_COMBINED
-                ? ResourceInputType.SIMPLE_COMBINED
-                : ResourceInputType.SIMPLE}
+              type={getResourceInputType(resourceTypes[resource])}
               showDetails={showDetails}
               onToggleShowDetails={onToggleShowDetails}
             />
@@ -302,7 +297,10 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                 {resource}: {(() => {
                   if (res && typeof res === "object" && "type" in res) {
                     if (res.type === "simple") {
-                      return res.value;
+                      // No color available for simple resources, just show value
+                      return (
+                        <span className="plan-details-resources-simple">{res.value}</span>
+                      );
                     } else if (res.type === "terra_mystica_power") {
                       return (
                         <span className="plan-details-power-purple">
@@ -322,14 +320,18 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                       const entries = Object.entries(res.resources || {});
                       return (
                         <>
-                          {entries.map(([key, val], idx) => (
-                            <React.Fragment key={key}>
-                              <span
-                                style={{ color: res.colors && res.colors[key] ? res.colors[key] : undefined, fontWeight: 'bold' }}
-                              >{val}</span>
-                              {idx < entries.length - 1 && <span>-</span>}
-                            </React.Fragment>
-                          ))}
+                          {entries.map(([key, val], idx) => {
+                            const bgColor = res.colors && res.colors[key] ? res.colors[key] : undefined;
+                            let textColor = undefined;
+                            if (bgColor && /^#([0-9A-F]{3}){1,2}$/i.test(bgColor)) {
+                              textColor = isColorDark(bgColor) ? '#fff' : '#222';
+                            }
+                            return (
+                              <React.Fragment key={key}>
+                                <span className="plan-details-resources-value-bg" style={{ background: bgColor, color: textColor }}>{val}</span>
+                              </React.Fragment>
+                            );
+                          })}
                         </>
                       );
                     }
@@ -346,3 +348,17 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
 };
 
 export default PlanStageEditor;
+
+// Utility to map ResourceType to ResourceInputType
+function getResourceInputType(type: ResourceType): ResourceInputType {
+  switch (type) {
+    case ResourceType.TERRA_MYSTICA_POWER:
+      return ResourceInputType.TERRA_MYSTICA_POWER;
+    case ResourceType.TERRA_MYSTICA_CULTS:
+      return ResourceInputType.TERRA_MYSTICA_CULTS;
+    case ResourceType.SIMPLE_COMBINED:
+      return ResourceInputType.SIMPLE_COMBINED;
+    default:
+      return ResourceInputType.SIMPLE;
+  }
+}

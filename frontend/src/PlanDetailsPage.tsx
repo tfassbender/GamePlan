@@ -11,6 +11,7 @@ import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } 
 import ResourceInput, { ResourceInputType } from "./resourceInputs/ResourceInput";
 import "./resourceInputs/ResourceInput.css";
 import { FaArrowLeft, FaPlus, FaEye, FaEyeSlash, FaClone, FaTrash, FaInfoCircle } from 'react-icons/fa';
+import { isColorDark } from "./common/colorUtils";
 
 interface PlanDetailsPageProps {
   username: string;
@@ -475,7 +476,10 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                   {resource}: {(() => {
                     if (res && typeof res === "object" && "type" in res) {
                       if (res.type === "simple") {
-                        return res.value;
+                        // Wrap simple value for consistent styling
+                        return (
+                          <span className="plan-details-resources-simple">{res.value}</span>
+                        );
                       } else if (res.type === "terra_mystica_power") {
                         return (
                           <span className="plan-details-power-purple">
@@ -495,14 +499,18 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                         const entries = Object.entries(res.resources || {});
                         return (
                           <>
-                            {entries.map(([key, val], idx) => (
-                              <React.Fragment key={key}>
-                                <span
-                                  style={{ color: res.colors && res.colors[key] ? res.colors[key] : undefined, fontWeight: 'bold' }}
-                                >{val}</span>
-                                {idx < entries.length - 1 && <span>-</span>}
-                              </React.Fragment>
-                            ))}
+                            {entries.map(([key, val], idx) => {
+                              const bgColor = res.colors && res.colors[key] ? res.colors[key] : undefined;
+                              let textColor = undefined;
+                              if (bgColor && /^#([0-9A-F]{3}){1,2}$/i.test(bgColor)) {
+                                textColor = isColorDark(bgColor) ? '#fff' : '#222';
+                              }
+                              return (
+                                <React.Fragment key={key}>
+                                  <span className="plan-details-resources-value-bg" style={{ background: bgColor, color: textColor }}>{val}</span>
+                                </React.Fragment>
+                              );
+                            })}
                           </>
                         );
                       }

@@ -1,6 +1,7 @@
 import React from "react";
 import "./ResourceInput.css";
 import "./ResourceInputSimpleCombined.css";
+import { isColorDark } from "../common/colorUtils";
 
 interface SimpleCombinedValue {
   [key: string]: number;
@@ -32,9 +33,16 @@ const ResourceInputSimpleCombined: React.FC<ResourceInputSimpleCombinedProps> = 
         <label className="resource-input-label resource-input-simple-combined-label" htmlFor={`show-simple-combined-details-${resource}`}>{resource}</label>
         {!showDetails && (
           <span className="resource-input-hidden-value">
-            {Object.entries(resources).map(([key, val]) => (
-              <span key={key} style={{ color: colors[key] || undefined, fontWeight: 'bold' }}>{`${val >= 0 ? "+" : ""}${val} `}</span>
-            ))}
+            {Object.entries(resources).map(([key, val]) => {
+              const bgColor = colors[key] || undefined;
+              let textColor = undefined;
+              if (bgColor && /^#([0-9A-F]{3}){1,2}$/i.test(bgColor)) {
+                textColor = isColorDark(bgColor) ? '#fff' : '#222';
+              }
+              return (
+                <span key={key} className="resource-input-simple-combined-value-bg" style={{ color: textColor, fontWeight: 'bold', background: bgColor }}>{`${val >= 0 ? "+" : ""}${val} `}</span>
+              );
+            })}
           </span>
         )}
       </div>
@@ -42,7 +50,20 @@ const ResourceInputSimpleCombined: React.FC<ResourceInputSimpleCombinedProps> = 
         <div className="resource-input-simple-combined-inputs">
           {Object.entries(resources).map(([key, val]) => (
             <div key={key} className="resource-input-simple-combined-column">
-              <label htmlFor={`input-${resource}-${key}`} className="resource-input-simple-combined-label" style={{ color: colors[key] || undefined }}>{key}</label>
+              <label
+                htmlFor={`input-${resource}-${key}`}
+                className="resource-input-simple-combined-resource-type-label"
+                style={{ color: (() => {
+                  const bgColor = colors[key] || undefined;
+                  if (bgColor && /^#([0-9A-F]{3}){1,2}$/i.test(bgColor)) {
+                    return isColorDark(bgColor) ? '#fff' : '#222';
+                  }
+                  return undefined;
+                })(), background: colors[key] || undefined }}
+                title={key}
+              >
+                {key}
+              </label>
               <button
                 type="button"
                 className="resource-input-btn resource-input-btn-increment"
@@ -55,7 +76,13 @@ const ResourceInputSimpleCombined: React.FC<ResourceInputSimpleCombinedProps> = 
                 value={val}
                 onChange={e => handleChange(key, Number(e.target.value))}
                 className="resource-input-simple-combined-spinner"
-                style={{ background: colors[key] || undefined, borderColor: colors[key] || undefined }}
+                style={{ background: colors[key] || undefined, borderColor: colors[key] || undefined, color: (() => {
+                  const bgColor = colors[key] || undefined;
+                  if (bgColor && /^#([0-9A-F]{3}){1,2}$/i.test(bgColor)) {
+                    return isColorDark(bgColor) ? '#fff' : '#222';
+                  }
+                  return undefined;
+                })() }}
                 step={1}
                 inputMode="numeric"
               />

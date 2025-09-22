@@ -11,7 +11,7 @@
   flex-wrap: wrap;
   gap: 1em;
   margin-top: 0.5em;
-  margin-left: 1em;
+  padding-left: 0.5em;
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -25,14 +25,27 @@
   box-sizing: border-box;
 }
 
-.resource-input-simple-combined-label {
+.resource-input-simple-combined-resource-type-label {
   font-weight: bold;
   margin-bottom: 0.2em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 75px;
+  max-width: 70px;
   display: block;
+  padding: 0.15em 0.5em;
+  border-radius: 1em;
+}
+
+.resource-input-simple-combined-value-bg {
+  display: inline-block;
+  padding: 0.2em 0.7em;
+  margin: 0 0.2em;
+  border-radius: 1.2em;
+  font-size: 1em;
+  font-weight: bold;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: background 0.2s;
 }
 
 .resource-input-simple-combined-spinner {
@@ -40,12 +53,13 @@
   min-width: 0;
   max-width: 100%;
   text-align: center;
-  border-radius: 1.5em;
+  border-radius: 1.2em;
   font-weight: bold;
   border-width: 2px;
   border-style: solid;
   outline: none;
   box-sizing: border-box;
+  padding: 0.15em 0.5em;
 }
 
 .resource-input-btn-increment {
