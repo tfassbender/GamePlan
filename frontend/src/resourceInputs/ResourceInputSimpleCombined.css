@@ -1,0 +1,57 @@
+/* ResourceInputSimpleCombined.css */
+.resource-input.resource-input-simple-combined {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3em;
+}
+
+.resource-input-simple-combined-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  margin-top: 0.5em;
+  margin-left: 1em;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.resource-input-simple-combined-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 75px;
+  flex: 0 1 75px;
+  box-sizing: border-box;
+}
+
+.resource-input-simple-combined-label {
+  font-weight: bold;
+  margin-bottom: 0.2em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 75px;
+  display: block;
+}
+
+.resource-input-simple-combined-spinner {
+  width: 3em;
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+  border-radius: 1.5em;
+  font-weight: bold;
+  border-width: 2px;
+  border-style: solid;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.resource-input-btn-increment {
+  margin-bottom: 0.2em;
+}
+
+.resource-input-btn-decrement {
+  margin-top: 0.2em;
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import "./ResourceInput.css";
+import "./ResourceInputSimpleCombined.css";
 
 interface SimpleCombinedValue {
   [key: string]: number;
@@ -28,7 +29,7 @@ const ResourceInputSimpleCombined: React.FC<ResourceInputSimpleCombinedProps> = 
           onChange={onToggleShowDetails}
           id={`show-simple-combined-details-${resource}`}
         />
-        <label className="resource-input-label" htmlFor={`show-simple-combined-details-${resource}`}>{resource}</label>
+        <label className="resource-input-label resource-input-simple-combined-label" htmlFor={`show-simple-combined-details-${resource}`}>{resource}</label>
         {!showDetails && (
           <span className="resource-input-hidden-value">
             {Object.entries(resources).map(([key, val]) => (
@@ -38,16 +39,15 @@ const ResourceInputSimpleCombined: React.FC<ResourceInputSimpleCombinedProps> = 
         )}
       </div>
       {showDetails && (
-        <div className="resource-input-simple-combined-inputs" style={{ display: 'flex', gap: '1em', marginTop: '0.5em', marginLeft: '1em' }}>
+        <div className="resource-input-simple-combined-inputs">
           {Object.entries(resources).map(([key, val]) => (
-            <div key={key} className="resource-input-simple-combined-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <label htmlFor={`input-${resource}-${key}`} style={{ color: colors[key] || undefined, fontWeight: 'bold', marginBottom: '0.2em' }}>{key}</label>
+            <div key={key} className="resource-input-simple-combined-column">
+              <label htmlFor={`input-${resource}-${key}`} className="resource-input-simple-combined-label" style={{ color: colors[key] || undefined }}>{key}</label>
               <button
                 type="button"
                 className="resource-input-btn resource-input-btn-increment"
                 onClick={() => handleChange(key, val + 1)}
                 aria-label={`Increase ${key}`}
-                style={{ marginBottom: '0.2em' }}
               >+</button>
               <input
                 id={`input-${resource}-${key}`}
@@ -55,7 +55,7 @@ const ResourceInputSimpleCombined: React.FC<ResourceInputSimpleCombinedProps> = 
                 value={val}
                 onChange={e => handleChange(key, Number(e.target.value))}
                 className="resource-input-simple-combined-spinner"
-                style={{ width: '3em', textAlign: 'center', borderRadius: '1.5em', fontWeight: 'bold', borderWidth: '2px', borderStyle: 'solid', outline: 'none', background: colors[key] || undefined, borderColor: colors[key] || undefined }}
+                style={{ background: colors[key] || undefined, borderColor: colors[key] || undefined }}
                 step={1}
                 inputMode="numeric"
               />
@@ -64,7 +64,6 @@ const ResourceInputSimpleCombined: React.FC<ResourceInputSimpleCombinedProps> = 
                 className="resource-input-btn resource-input-btn-decrement"
                 onClick={() => handleChange(key, val - 1)}
                 aria-label={`Decrease ${key}`}
-                style={{ marginTop: '0.2em' }}
               >−</button>
             </div>
           ))}
