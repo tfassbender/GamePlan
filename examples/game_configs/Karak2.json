@@ -6,7 +6,7 @@
     "Health": "SIMPLE",
     "Resources": "SIMPLE_COMBINED",
     "Troops": "SIMPLE_COMBINED",
-    "Troop Limit": "SIMPLE",
+    "Troop Limit": "ABSOLUTE",
     "Weapons": "SIMPLE",
     "Spells": "SIMPLE"
   },
@@ -57,7 +57,7 @@
         }
       },
       "Troop Limit": {
-        "type": "simple",
+        "type": "absolute",
         "value": 0
       },
       "Weapons": {

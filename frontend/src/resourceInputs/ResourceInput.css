@@ -42,7 +42,7 @@
 }
 
 .resource-input-spinner {
-  width: 4em;
+  width: 2em;
   background: #181a1b;
   color: #f1f1f1;
   border: 1px solid #333;
@@ -85,4 +85,10 @@ input[type=number] {
 }
 .resource-input-tm-power-oval:focus {
   border-color: #c084fc;
+}
+
+.resource-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }

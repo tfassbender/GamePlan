@@ -88,6 +88,9 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
       const zeroedResources = Object.fromEntries(Object.keys(resources).map(key => [key, 0]));
       return { type: "simple_combined", resources: zeroedResources, colors };
     }
+    if (type === ResourceType.ABSOLUTE) {
+      return { type: "absolute", value: null };
+    }
     return { type: "simple", value: 0 };
   };
 
@@ -512,6 +515,10 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                               );
                             })}
                           </>
+                        );
+                      } else if (res.type === "absolute") {
+                        return (
+                          <span className="plan-details-resources-absolute">{res.value !== null ? res.value : "N/A"}</span>
                         );
                       }
                     }

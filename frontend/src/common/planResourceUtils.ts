@@ -47,6 +47,8 @@ export function calculatePlanResources(
         resources: { ...val.resources },
         colors: val.colors ? { ...val.colors } : {} // Always assign an object
       };
+    } else if (val && typeof val === "object" && "type" in val && val.type === "absolute") {
+      resources[key] = { type: "absolute", value: val.value };
     }
   }
   let isValid = true;
@@ -59,6 +61,10 @@ export function calculatePlanResources(
         const newValue = prev + change.value;
         resources[key] = { type: "simple", value: newValue };
         if (!allowNegative && newValue < 0) isValid = false;
+      }
+      if (change && typeof change === "object" && "type" in change && change.type === "absolute") {
+        const prev = resources[key] && resources[key].type === "absolute" ? resources[key].value : null;
+        resources[key] = { type: "absolute", value: change.value !== null ? change.value : prev };
       }
       if (change && typeof change === "object" && "type" in change && change.type === "terra_mystica_power") {
         let { bowl1, bowl2, bowl3, gain, burn, use } = change;

@@ -2,12 +2,14 @@ import React from "react";
 import ResourceInputPower from "./ResourceInputPower";
 import ResourceInputCults from "./ResourceInputCults";
 import ResourceInputSimpleCombined from "./ResourceInputSimpleCombined";
+import ResourceInputAbsolute from "./ResourceInputAbsolute";
 
 export enum ResourceInputType {
   SIMPLE = "SIMPLE",
+  SIMPLE_COMBINED = "SIMPLE_COMBINED", //
+  ABSOLUTE = "ABSOLUTE", //
   TERRA_MYSTICA_POWER = "TERRA_MYSTICA_POWER", //
-  TERRA_MYSTICA_CULTS = "TERRA_MYSTICA_CULTS", //
-  SIMPLE_COMBINED = "SIMPLE_COMBINED" //
+  TERRA_MYSTICA_CULTS = "TERRA_MYSTICA_CULTS" //
 }
 
 // Type for TERRA_MYSTICA_CULTS
@@ -67,6 +69,14 @@ export type ResourceInputProps =
       type: ResourceInputType.SIMPLE_COMBINED;
       showDetails?: boolean;
       onToggleShowDetails?: () => void;
+    }
+  | {
+      resource: string;
+      value: number | null;
+      onChange: (value: number | null) => void;
+      type: ResourceInputType.ABSOLUTE;
+      showDetails?: boolean;
+      onToggleShowDetails?: () => void;
     };
 
 const ResourceInput: React.FC<ResourceInputProps> = (props) => {
@@ -82,6 +92,9 @@ const ResourceInput: React.FC<ResourceInputProps> = (props) => {
   if (props.type === ResourceInputType.SIMPLE_COMBINED) {
     const value = props.value as SimpleCombinedResourceChangeValue;
     return <ResourceInputSimpleCombined resource={resource} value={value} onChange={props.onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails!} />;
+  }
+  if (props.type === ResourceInputType.ABSOLUTE) {
+    return <ResourceInputAbsolute resource={resource} value={props.value as number | null} onChange={props.onChange} showDetails={showDetails} onToggleShowDetails={onToggleShowDetails} />;
   }
   // SIMPLE
   const value = props.value as number;
@@ -111,7 +124,7 @@ const ResourceInput: React.FC<ResourceInputProps> = (props) => {
   };
   return (
     <div className="resource-input">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+      <div className="resource-input-row">
         <input
           type="checkbox"
           checked={showDetails}

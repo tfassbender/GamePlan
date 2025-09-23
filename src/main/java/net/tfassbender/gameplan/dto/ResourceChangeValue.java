@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({ //
         @JsonSubTypes.Type(value = SimpleResourceChange.class, name = "simple"),  //
         @JsonSubTypes.Type(value = SimpleCombinedResourceChange.class, name = "simple_combined"), //
+        @JsonSubTypes.Type(value = AbsoluteResourceChange.class, name = "absolute"), //
         @JsonSubTypes.Type(value = TerraMysticaPowerResourceChange.class, name = "terra_mystica_power"), //
         @JsonSubTypes.Type(value = TerraMysticaCultsResourceChange.class, name = "terra_mystica_cults")  //
 })

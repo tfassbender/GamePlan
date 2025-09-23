@@ -75,6 +75,8 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
         const type = resourceTypes[key];
         if (type === ResourceType.SIMPLE) {
           clearedResourceChanges[key] = { type: "simple", value: 0 };
+        } else if (type === ResourceType.ABSOLUTE) {
+          clearedResourceChanges[key] = { type: "absolute", value: null };
         } else if (type === ResourceType.TERRA_MYSTICA_POWER) {
           clearedResourceChanges[key] = { type: "terra_mystica_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
         } else if (type === ResourceType.TERRA_MYSTICA_CULTS) {
@@ -240,6 +242,10 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
             value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "simple_combined")
               ? resourceChange
               : { type: "simple_combined", resources: {}, colors: {} };
+          } else if (resourceTypes[resource] === ResourceType.ABSOLUTE) {
+            value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "absolute")
+              ? resourceChange.value
+              : null;
           } else {
             value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "simple")
               ? resourceChange.value
@@ -256,6 +262,8 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                   ? { type: "terra_mystica_cults", ...newValue }
                   : resourceTypes[resource] === ResourceType.SIMPLE_COMBINED
                   ? { type: "simple_combined", ...newValue }
+                  : resourceTypes[resource] === ResourceType.ABSOLUTE
+                  ? { type: "absolute", value: newValue }
                   : { type: "simple", value: newValue }
               }
             });
@@ -334,6 +342,10 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                           })}
                         </>
                       );
+                    } else if (res.type === "absolute") {
+                      return (
+                        <span className="plan-details-resources-absolute">{res.value !== null ? res.value : "N/A"}</span>
+                      );
                     }
                   }
                   return 0;
@@ -358,6 +370,8 @@ function getResourceInputType(type: ResourceType): ResourceInputType {
       return ResourceInputType.TERRA_MYSTICA_CULTS;
     case ResourceType.SIMPLE_COMBINED:
       return ResourceInputType.SIMPLE_COMBINED;
+    case ResourceType.ABSOLUTE:
+      return ResourceInputType.ABSOLUTE;
     default:
       return ResourceInputType.SIMPLE;
   }

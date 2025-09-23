@@ -1,0 +1,68 @@
+.resource-input-absolute {
+  /* Container styling, can be customized further */
+}
+.resource-input-absolute .resource-input-btn {
+  background: #23272a;
+  color: #00bfff;
+  border: none;
+  border-radius: 50%;
+  width: 2.2em;
+  height: 2.2em;
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  touch-action: manipulation;
+}
+.resource-input-absolute .resource-input-btn:active {
+  background: #00bfff;
+  color: #fff;
+}
+.resource-input-absolute .resource-input-btn-na {
+  background: transparent;
+  color: #888;
+  border: 2px dashed #aaa;
+  border-radius: 50%;
+  width: 3em;
+  height: 2em;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  touch-action: manipulation;
+  font-weight: normal;
+}
+.resource-input-absolute .resource-input-btn-na.selected {
+  background: #ffbfbf;
+  color: #b30000;
+  border: 2px solid #b30000;
+  font-weight: bold;
+}
+.resource-input-absolute .resource-input-btn-na:active {
+  background: #b30000;
+  color: #fff;
+}
+.resource-input-absolute .resource-input-spinner {
+  width: 2em;
+  background: #181a1b;
+  color: #f1f1f1;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 0.2em 0.8em;
+  font-size: 1em;
+  transition: border-color 0.2s;
+  min-height: 2.5em;
+  text-align: center;
+  touch-action: manipulation;
+}
+.resource-input-absolute .resource-input-spinner:focus {
+  outline: none;
+  border-color: #4e8cff;
+}
