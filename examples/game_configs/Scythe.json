@@ -8,7 +8,8 @@
     "Power": "SIMPLE",
     "Ammo": "SIMPLE_COMBINED",
     "Units": "SIMPLE_COMBINED",
-    "Resources": "SIMPLE_COMBINED"
+    "Resources": "SIMPLE_COMBINED",
+    "Buildings": "ONE_TIME_COMBINED"
   },
   "resourceOrder": [
     "Coin",
@@ -17,7 +18,8 @@
     "Power",
     "Ammo",
     "Units",
-    "Resources"
+    "Resources",
+    "Buildings"
   ],
   "defaultStartingResources": {
     "description": "Game start resources (may differ for different fractions)",
@@ -81,6 +83,21 @@
           "Wood": "#82580e",
           "Metal": "#575757",
           "Oil": "#1e2e66"
+        }
+      },
+      "Buildings": {
+        "type": "one_time_combined",
+        "resources": {
+          "Mill": false,
+          "Tunnel": false,
+          "Monument": false,
+          "Armory": false
+        },
+        "colors": {
+          "Mill": "#75390b",
+          "Tunnel": "#575757",
+          "Monument": "#f200ff",
+          "Armory": "#ffe600"
         }
       }
     }
