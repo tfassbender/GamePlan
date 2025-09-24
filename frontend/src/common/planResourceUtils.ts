@@ -50,6 +50,13 @@ export function calculatePlanResources(
     } else if (val && typeof val === "object" && "type" in val && val.type === "absolute") {
       resources[key] = { type: "absolute", value: val.value };
     }
+    else if (val && typeof val === "object" && "type" in val && val.type === "one_time_combined") {
+      resources[key] = {
+        type: "one_time_combined",
+        resources: { ...val.resources },
+        colors: val.colors ? { ...val.colors } : {} // Always assign an object
+      };
+    }
   }
   let isValid = true;
   for (const stageIdx in stages) {
@@ -148,6 +155,27 @@ export function calculatePlanResources(
           type: "simple_combined",
           resources: newResources,
           colors: change.type === "simple_combined" && change.colors ? { ...change.colors } : (resources[key] && resources[key].type === "simple_combined" ? resources[key].colors : {})
+        };
+      }
+      if (change && typeof change === "object" && "type" in change && change.type === "one_time_combined") {
+        const prev = resources[key] && resources[key].type === "one_time_combined"
+          ? resources[key].resources
+          : {};
+        const newResources: Record<string, boolean | null> = {};
+        for (const resKey in change.resources) {
+          // Use the new value if not null, otherwise keep previous
+          newResources[resKey] = change.resources[resKey] !== null ? change.resources[resKey] : (prev[resKey] ?? null);
+        }
+        // Also keep any resource keys from prev that are not in change
+        for (const resKey in prev) {
+          if (!(resKey in newResources)) {
+            newResources[resKey] = prev[resKey];
+          }
+        }
+        resources[key] = {
+          type: "one_time_combined",
+          resources: newResources,
+          colors: change.type === "one_time_combined" && change.colors ? { ...change.colors } : (resources[key] && resources[key].type === "one_time_combined" ? resources[key].colors : {})
         };
       }
     }

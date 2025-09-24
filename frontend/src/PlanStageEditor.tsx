@@ -7,6 +7,8 @@ import "./resourceInputs/ResourceInput.css";
 import { calculatePlanResources } from "./common/planResourceUtils";
 import { FaPlus, FaArrowUp, FaArrowDown, FaBroom, FaTrash } from 'react-icons/fa';
 import { isColorDark } from "./common/colorUtils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes, faMinus } from "@fortawesome/free-solid-svg-icons";
 
 interface PlanStageEditorProps {
   index: number;
@@ -70,6 +72,13 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
         clearedResourceChanges[key] = {
           ...value,
           resources: Object.fromEntries(Object.keys(value.resources || {}).map(k => [k, 0]))
+        };
+      } else if (value && typeof value === "object" && value.type === "one_time_combined") {
+        // Set all values to null, keep keys and colors
+        clearedResourceChanges[key] = {
+          type: "one_time_combined",
+          resources: Object.fromEntries(Object.keys(value.resources || {}).map(k => [k, null])),
+          colors: value.colors || {}
         };
       } else {
         const type = resourceTypes[key];
@@ -314,7 +323,6 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                 {resource}: {(() => {
                   if (res && typeof res === "object" && "type" in res) {
                     if (res.type === "simple") {
-                      // No color available for simple resources, just show value
                       return (
                         <span className="plan-details-resources-simple">{res.value}</span>
                       );
@@ -354,6 +362,26 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                     } else if (res.type === "absolute") {
                       return (
                         <span className="plan-details-resources-absolute">{res.value !== null ? res.value : "N/A"}</span>
+                      );
+                    } else if (res.type === "one_time_combined") {
+                      const entries = Object.entries(res.resources || {});
+                      return (
+                        <>
+                          {entries.map(([key, val], idx) => {
+                            const bgColor = res.colors && res.colors[key] ? res.colors[key] : undefined;
+                            let textColor = undefined;
+                            if (bgColor && /^#([0-9A-F]{3}){1,2}$/i.test(bgColor)) {
+                              textColor = isColorDark(bgColor) ? '#fff' : '#222';
+                            }
+                            let icon;
+                            if (val === true) icon = <FontAwesomeIcon icon={faCheck} />;
+                            else if (val === false) icon = <FontAwesomeIcon icon={faTimes} />;
+                            else icon = <FontAwesomeIcon icon={faMinus} />;
+                            return (
+                              <span key={key} className="plan-details-resources-value-bg plan-details-resource-one-time-combined" style={{ background: bgColor, color: textColor }}>{icon}</span>
+                            );
+                          })}
+                        </>
                       );
                     }
                   }

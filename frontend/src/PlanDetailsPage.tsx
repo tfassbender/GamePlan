@@ -11,6 +11,8 @@ import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } 
 import ResourceInput, { ResourceInputType } from "./resourceInputs/ResourceInput";
 import "./resourceInputs/ResourceInput.css";
 import { FaArrowLeft, FaPlus, FaEye, FaEyeSlash, FaClone, FaTrash, FaInfoCircle } from 'react-icons/fa';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { isColorDark } from "./common/colorUtils";
 
 interface PlanDetailsPageProps {
@@ -77,16 +79,19 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
 
   const createEmptyResourceChange = (
     type: ResourceType,
-    resources: Record<string, number> = {},
+    resources: Record<string, any> = {},
     colors: Record<string, string> = {}
   ): ResourceChangeValue => {
     if (type === ResourceType.TERRA_MYSTICA_POWER) {
       return { type: "terra_mystica_power", bowl1: 0, bowl2: 0, bowl3: 0, gain: 0, burn: 0, use: 0 };
     }
     if (type === ResourceType.SIMPLE_COMBINED) {
-      // Set all resource values to 0, keep keys
       const zeroedResources = Object.fromEntries(Object.keys(resources).map(key => [key, 0]));
       return { type: "simple_combined", resources: zeroedResources, colors };
+    }
+    if (type === ResourceType.ONE_TIME_COMBINED) {
+      // Set all values to null, keep keys and colors
+      return { type: "one_time_combined", resources, colors };
     }
     if (type === ResourceType.ABSOLUTE) {
       return { type: "absolute", value: null };
@@ -103,9 +108,16 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
         Object.entries(plan.resourceTypes).map(([r, t]) => {
           let resources = {};
           let colors = {};
-          if (prevStage && prevStage.resourceChanges[r] && prevStage.resourceChanges[r].type === "simple_combined") {
-            resources = prevStage.resourceChanges[r].resources || {};
-            colors = prevStage.resourceChanges[r].colors || {};
+          if (prevStage && prevStage.resourceChanges[r]) {
+            if (prevStage.resourceChanges[r].type === "simple_combined") {
+              resources = prevStage.resourceChanges[r].resources || {};
+              colors = prevStage.resourceChanges[r].colors || {};
+            } else if (prevStage.resourceChanges[r].type === "one_time_combined") {
+              // Copy keys, set all values to null, keep colors
+              const prevResources = prevStage.resourceChanges[r].resources || {};
+              resources = Object.fromEntries(Object.keys(prevResources).map(k => [k, null]));
+              colors = prevStage.resourceChanges[r].colors || {};
+            }
           }
           return [r, createEmptyResourceChange(t, resources, colors)];
         })
@@ -133,9 +145,15 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
         Object.entries(plan.resourceTypes).map(([r, t]) => {
           let resources = {};
           let colors = {};
-          if (prevStage && prevStage.resourceChanges[r] && prevStage.resourceChanges[r].type === "simple_combined") {
-            resources = prevStage.resourceChanges[r].resources || {};
-            colors = prevStage.resourceChanges[r].colors || {};
+          if (prevStage && prevStage.resourceChanges[r]) {
+            if (prevStage.resourceChanges[r].type === "simple_combined") {
+              resources = prevStage.resourceChanges[r].resources || {};
+              colors = prevStage.resourceChanges[r].colors || {};
+            } else if (prevStage.resourceChanges[r].type === "one_time_combined") {
+              const prevResources = prevStage.resourceChanges[r].resources || {};
+              resources = Object.fromEntries(Object.keys(prevResources).map(k => [k, null]));
+              colors = prevStage.resourceChanges[r].colors || {};
+            }
           }
           return [r, createEmptyResourceChange(t, resources, colors)];
         })
@@ -166,9 +184,15 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
         Object.entries(plan.resourceTypes).map(([r, t]) => {
           let resources = {};
           let colors = {};
-          if (prevStage && prevStage.resourceChanges[r] && prevStage.resourceChanges[r].type === "simple_combined") {
-            resources = prevStage.resourceChanges[r].resources || {};
-            colors = prevStage.resourceChanges[r].colors || {};
+          if (prevStage && prevStage.resourceChanges[r]) {
+            if (prevStage.resourceChanges[r].type === "simple_combined") {
+              resources = prevStage.resourceChanges[r].resources || {};
+              colors = prevStage.resourceChanges[r].colors || {};
+            } else if (prevStage.resourceChanges[r].type === "one_time_combined") {
+              const prevResources = prevStage.resourceChanges[r].resources || {};
+              resources = Object.fromEntries(Object.keys(prevResources).map(k => [k, null]));
+              colors = prevStage.resourceChanges[r].colors || {};
+            }
           }
           return [r, createEmptyResourceChange(t, resources, colors)];
         })
@@ -468,66 +492,57 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
           &#931;
         </span>
         <span className="plan-details-resources-text">
-          {plan && (
-            (plan.resourceOrder?.length > 0
-              ? [...plan.resourceOrder, ...Object.keys(plan.resourceTypes).filter(r => !plan.resourceOrder.includes(r))]
-              : Object.keys(plan.resourceTypes)
-            ).map(resource => {
-              const res = finalResourceResult.finalResources[resource];
-              return (
-                <span key={resource} className="plan-details-resource-pair">
-                  {resource}: {(() => {
-                    if (res && typeof res === "object" && "type" in res) {
-                      if (res.type === "simple") {
-                        // Wrap simple value for consistent styling
-                        return (
-                          <span className="plan-details-resources-simple">{res.value}</span>
-                        );
-                      } else if (res.type === "terra_mystica_power") {
-                        return (
-                          <span className="plan-details-power-purple">
-                            {`${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`}
-                          </span>
-                        );
-                      } else if (res.type === "terra_mystica_cults") {
-                        return (
-                          <>
-                            <span className="plan-details-cults-fire">{res.fire}</span>
-                            -<span className="plan-details-cults-water">{res.water}</span>
-                            -<span className="plan-details-cults-earth">{res.earth}</span>
-                            -<span className="plan-details-cults-air">{res.air}</span>
-                          </>
-                        );
-                      } else if (res.type === "simple_combined") {
-                        const entries = Object.entries(res.resources || {});
-                        return (
-                          <>
-                            {entries.map(([key, val], idx) => {
-                              const bgColor = res.colors && res.colors[key] ? res.colors[key] : undefined;
-                              let textColor = undefined;
-                              if (bgColor && /^#([0-9A-F]{3}){1,2}$/i.test(bgColor)) {
-                                textColor = isColorDark(bgColor) ? '#fff' : '#222';
-                              }
-                              return (
-                                <React.Fragment key={key}>
-                                  <span className="plan-details-resources-value-bg" style={{ background: bgColor, color: textColor }}>{val}</span>
-                                </React.Fragment>
-                              );
-                            })}
-                          </>
-                        );
-                      } else if (res.type === "absolute") {
-                        return (
-                          <span className="plan-details-resources-absolute">{res.value !== null ? res.value : "N/A"}</span>
-                        );
+          {plan && Object.keys(plan.resourceTypes).map(resource => {
+            const res = finalResourceResult.finalResources[resource];
+            if (res && typeof res === "object" && "type" in res) {
+              if (res.type === "simple") {
+                return (
+                  <span key={resource} className="plan-details-resource-pair">{resource}: <span className="plan-details-resources-simple">{res.value}</span></span>
+                );
+              } else if (res.type === "simple_combined") {
+                const entries = Object.entries(res.resources || {});
+                return (
+                  <span key={resource} className="plan-details-resource-pair">{resource}: <span className="plan-details-resource-simple-combined">
+                    {entries.map(([key, val]) => {
+                      const bgColor = res.colors && res.colors[key] ? res.colors[key] : undefined;
+                      let textColor = undefined;
+                      if (bgColor && /^#([0-9A-F]{3}){1,2}$/i.test(bgColor)) {
+                        textColor = isColorDark(bgColor) ? '#fff' : '#222';
                       }
-                    }
-                    return 0;
-                  })()}
-                </span>
-              );
-            })
-          )}
+                      return (
+                        <span key={key} className="plan-details-resources-value-bg" style={{ background: bgColor, color: textColor }}>{val}</span>
+                      );
+                    })}
+                  </span></span>
+                );
+              } else if (res.type === "absolute") {
+                return (
+                  <span key={resource} className="plan-details-resource-pair">{resource}: <span className="plan-details-resources-absolute">{res.value !== null ? res.value : "N/A"}</span></span>
+                );
+              } else if (res.type === "one_time_combined") {
+                const entries = Object.entries(res.resources || {});
+                return (
+                  <span key={resource} className="plan-details-resource-pair">{resource}: <span className="plan-details-resource-one-time-combined">
+                    {entries.map(([key, val]) => {
+                      const bgColor = res.colors && res.colors[key] ? res.colors[key] : undefined;
+                      let textColor = undefined;
+                      if (bgColor && /^#([0-9A-F]{3}){1,2}$/i.test(bgColor)) {
+                        textColor = isColorDark(bgColor) ? '#fff' : '#222';
+                      }
+                      let icon;
+                      if (val === true) icon = <FontAwesomeIcon icon={faCheck} />;
+                      else if (val === false) icon = <FontAwesomeIcon icon={faTimes} />;
+                      else icon = <FontAwesomeIcon icon={faMinus} />;
+                      return (
+                        <span key={key} className="plan-details-resources-value-bg plan-details-resource-one-time-combined" style={{ background: bgColor, color: textColor }}>{icon}</span>
+                      );
+                    })}
+                  </span></span>
+                );
+              }
+            }
+            return null;
+          })}
         </span>
       </div>
     </div>
