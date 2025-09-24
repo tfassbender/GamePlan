@@ -1,0 +1,117 @@
+.resource-input-one-time-combined {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+.one-time-combined-resource-label {
+  margin-right: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 4px;
+  min-width: 48px;
+  display: inline-block;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+.one-time-combined-btn-group {
+  display: flex;
+  gap: 0px;
+}
+.one-time-combined-btn {
+  padding: 2px 8px;
+  border: 1px solid #444;
+  background: #222;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.2em;
+  outline: none;
+  border-radius: 0;
+  margin-left: -1px;
+  position: relative;
+  z-index: 1;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.one-time-combined-btn:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  margin-left: 0;
+}
+.one-time-combined-btn:last-child {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.one-time-combined-btn.active {
+  border-color: #3399ff;
+  background: #3399ff;
+  color: #fff;
+  font-weight: bold;
+  z-index: 2;
+}
+.one-time-combined-btn:focus {
+  border-color: #66ccff;
+}
+.one-time-combined-btn-yes {
+  /* Optionally, use a slightly greenish dark for yes */
+  background: #234c2a;
+}
+.one-time-combined-btn-yes.active {
+  background: #43d17a;
+  color: #fff;
+}
+.one-time-combined-btn-no {
+  /* Optionally, use a slightly reddish dark for no */
+  background: #4c2323;
+}
+.one-time-combined-btn-no.active {
+  background: #ff4c4c;
+  color: #fff;
+}
+.one-time-combined-btn-notset {
+  background: #222;
+}
+.one-time-combined-btn-notset.active {
+  background: #666;
+  color: #fff;
+}
+.resource-input-one-time-combined-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  margin-top: 4px;
+}
+.resource-input-one-time-combined-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.2em;
+}
+.one-time-combined-resource-label-td {
+  vertical-align: middle;
+  padding-right: 8px;
+}
+.one-time-combined-btn-group-td {
+  width: auto;
+  vertical-align: middle;
+  text-align: left;
+}
+.one-time-combined-hint-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8em;
+  height: 1.8em;
+  border-radius: 4px;
+  margin-right: 0.3em;
+  font-size: 1.1em;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  transition: background 0.2s, color 0.2s;
+}
+.resource-input-one-time-combined-hint-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.2em;
+  margin-top: 4px;
+}

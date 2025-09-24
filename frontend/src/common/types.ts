@@ -17,16 +17,35 @@ export enum ResourceType {
   SIMPLE = "SIMPLE",
   SIMPLE_COMBINED = "SIMPLE_COMBINED",
   ABSOLUTE = "ABSOLUTE",
+  ONE_TIME_COMBINED = "ONE_TIME_COMBINED",
+  // Game-specific types
   TERRA_MYSTICA_POWER = "TERRA_MYSTICA_POWER",
   TERRA_MYSTICA_CULTS = "TERRA_MYSTICA_CULTS"
   // Add more types as needed
 }
 
-export type ResourceChangeValue = SimpleResourceChange | PowerResourceChange | TerraMysticaCultsResourceChange | SimpleCombinedResourceChange | AbsoluteResourceChange;
+export type ResourceChangeValue = SimpleResourceChange | PowerResourceChange | TerraMysticaCultsResourceChange | SimpleCombinedResourceChange | AbsoluteResourceChange | OneTimeCombinedResourceChange;
 
 export interface SimpleResourceChange {
   type: "simple";
   value: number;
+}
+
+export interface SimpleCombinedResourceChange {
+  type: "simple_combined";
+  resources: Record<string, number>;
+  colors: Record<string, string>;
+}
+
+export interface AbsoluteResourceChange {
+  type: "absolute";
+  value: number | null;
+}
+
+export interface OneTimeCombinedResourceChange {
+    type: "one_time_combined";
+    resources: Record<string, boolean | null>;
+    colors: Record<string, string>;
 }
 
 export interface PowerResourceChange {
@@ -45,15 +64,4 @@ export interface TerraMysticaCultsResourceChange {
   water: number;
   earth: number;
   air: number;
-}
-
-export interface SimpleCombinedResourceChange {
-  type: "simple_combined";
-  resources: Record<string, number>;
-  colors: Record<string, string>;
-}
-
-export interface AbsoluteResourceChange {
-  type: "absolute";
-  value: number | null;
 }

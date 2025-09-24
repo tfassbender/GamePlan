@@ -3,7 +3,7 @@ package net.tfassbender.gameplan.rest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import net.tfassbender.gameplan.dto.GameDto;
-import net.tfassbender.gameplan.dto.SimpleResourceChange;
+import net.tfassbender.gameplan.dto.resource.SimpleResourceChange;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

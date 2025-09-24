@@ -242,6 +242,11 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
             value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "simple_combined")
               ? resourceChange
               : { type: "simple_combined", resources: {}, colors: {} };
+          } else if (resourceTypes[resource] === ResourceType.ONE_TIME_COMBINED) {
+            // Only check for 'one_time_combined' type if resourceType matches
+            value = (resourceChange && typeof resourceChange === "object" && 'type' in resourceChange && resourceChange.type === "one_time_combined")
+              ? resourceChange
+              : { type: "one_time_combined", resources: {}, colors: {} };
           } else if (resourceTypes[resource] === ResourceType.ABSOLUTE) {
             value = (resourceChange && typeof resourceChange === "object" && resourceChange.type === "absolute")
               ? resourceChange.value
@@ -262,6 +267,8 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
                   ? { type: "terra_mystica_cults", ...newValue }
                   : resourceTypes[resource] === ResourceType.SIMPLE_COMBINED
                   ? { type: "simple_combined", ...newValue }
+                  : resourceTypes[resource] === ResourceType.ONE_TIME_COMBINED
+                  ? { type: "one_time_combined", ...newValue }
                   : resourceTypes[resource] === ResourceType.ABSOLUTE
                   ? { type: "absolute", value: newValue }
                   : { type: "simple", value: newValue }
@@ -278,6 +285,8 @@ const PlanStageEditor: React.FC<PlanStageEditorProps> = ({
               {...(resourceTypes[resource] === ResourceType.TERRA_MYSTICA_CULTS
                 ? { value: { fire: value.fire, water: value.water, earth: value.earth, air: value.air } }
                 : resourceTypes[resource] === ResourceType.SIMPLE_COMBINED
+                ? { value: { resources: value.resources, colors: value.colors } }
+                : resourceTypes[resource] === ResourceType.ONE_TIME_COMBINED
                 ? { value: { resources: value.resources, colors: value.colors } }
                 : { value })}
               onChange={handleResourceChange}
@@ -372,6 +381,8 @@ function getResourceInputType(type: ResourceType): ResourceInputType {
       return ResourceInputType.SIMPLE_COMBINED;
     case ResourceType.ABSOLUTE:
       return ResourceInputType.ABSOLUTE;
+    case ResourceType.ONE_TIME_COMBINED:
+      return ResourceInputType.ONE_TIME_COMBINED;
     default:
       return ResourceInputType.SIMPLE;
   }
