@@ -23,18 +23,23 @@ changes over time.
 
 ## 🚧 Project Status
 
-GamePlan is currently in development. Most core features are implemented, but some polishing and additional features are
-still pending. Also, some specialized features for certain games are planned for the future.
+Version 1.0.0 is available as a first stable release. Some additional features are planned for future releases.
 
-## ✨ Planned Features
+## ✨ Features
 
 ### 🔹 Core Features
 
 - Add and remove **turns**, each with:
     - A **comment** or label (free text)
-    - Manual **resource changes** (+ / -)
+    - Manual **resource changes**
+        - Simple inputs for numeric changes
+        - Combined inputs with customizable names and colors for simple inputs
+        - Absolute inputs for setting values that are not summed up
+        - One Time inputs using tri-state buttons to set boolean values
+        - Specialized inputs for custom resources (Terra Mystica power cycle or cults)
 - Configurable **resources per game** (defined in backend JSON)
-- **Live resource summary** with per-turn calculation
+- Resource **templates** for predefined starting states
+- **Live resource summary** with per-turn and total calculation
 - **Warnings** for negative resource totals
 
 ### 💾 Persistence
@@ -45,22 +50,20 @@ still pending. Also, some specialized features for certain games are planned for
     - **Multiple plans per game**
     - **Copying** a plan (for branching scenarios)
     - **Deleting** plans
-- Simple, shareable URLs: \<domain>/\<username>/\<game_id>/\<plan_id>
-- Example: `game-plan.net/tobias/tm1/3` → 3rd plan for Tobias’ first Terra Mystica game
+- Simple, shareable URLs: \<domain>/app/\<username>/plan/\<plan_id>
+- Example: `game-plan.net/app/tobias/plan/terra_mystia_3` → 3rd plan for Tobias’ Terra Mystica game
 
 ### 🛠️ Configuration
 
 - Backend uses JSON **config files** for each game
 - Each config defines available resources
 - No admin UI needed for now—just drop files into a config directory
+- Example configs for some games are provided in the [examples/game_configs/](examples/game_configs/) folder
 
 ## 🌱 Additional (Future) Features
 
-- Resource **templates** for predefined starting states
-- Support for **nested or grouped resources** (not only game specific ones for Terra Mystica)
 - **Undo/Redo** for turn/resource edits
--
-    - Plans can be **exported** and **imported** (e.g. for testing or sharing)
+- **Constraints** for resource limits (e.g., max 20 money / sum of troops max *\<a variable troop count\>*)
 
 ## 📁 Relevant Folders
 
@@ -71,12 +74,11 @@ still pending. Also, some specialized features for certain games are planned for
 
 ## 🧩 Design
 
-GamePlan is **mobile-first** but fully responsive:
+GamePlan is **mobile-first** and fully responsive:
 
-- **Top**: Current totals
-- **Bottom**: Expandable list of turns
-- **Accordions** for editing individual turns
-- Optional **overlay sidebar** for actions like "new plan", "copy plan", etc.
+- **Top**: Menu bar with game and plan selection
+- **Middle**: Scrollable list of turns (inputs can be expanded/collapsed)
+- **Bottom**: Current totals
 
 ## 🖼️ Screenshots
 
@@ -91,6 +93,12 @@ Below are some example screenshots of GamePlan in action:
   </figure>
   <figure>
     <img src="screenshots/plan_tm_invalid.png" alt="Invalid Plan Example" width="300" />
+  </figure>
+  <figure>
+    <img src="screenshots/plan_gp.png" alt="Gaia Project Plan Example" width="300" />
+  </figure>
+  <figure>
+    <img src="screenshots/plan_karak2.png" alt="Karak 2 Plan Example" width="300" />
   </figure>
 </div>
 
