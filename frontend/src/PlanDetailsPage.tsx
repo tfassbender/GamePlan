@@ -519,6 +519,19 @@ const PlanDetailsPage: React.FC<PlanDetailsPageProps> = ({ username, planName, o
                 return (
                   <span key={resource} className="plan-details-resource-pair">{resource}: <span className="plan-details-resources-absolute">{res.value !== null ? res.value : "N/A"}</span></span>
                 );
+              } else if (res.type === "terra_mystica_power") {
+                return (
+                  <span key={resource} className="plan-details-resource-pair">{resource}: <span className="plan-details-power-purple">{`${res.bowl1 < 0 ? `'${res.bowl1}'` : res.bowl1}-${res.bowl2 < 0 ? `'${res.bowl2}'` : res.bowl2}-${res.bowl3 < 0 ? `'${res.bowl3}'` : res.bowl3}`}</span></span>
+                );
+              } else if (res.type === "terra_mystica_cults") {
+                return (
+                  <>
+                    <span className="plan-details-cults-fire">{res.fire}</span>
+                    -<span className="plan-details-cults-water">{res.water}</span>
+                    -<span className="plan-details-cults-earth">{res.earth}</span>
+                    -<span className="plan-details-cults-air">{res.air}</span>
+                  </>
+                );
               } else if (res.type === "one_time_combined") {
                 const entries = Object.entries(res.resources || {});
                 return (
