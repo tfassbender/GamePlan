@@ -42,8 +42,31 @@ const features = [
   {
     title: "Resource Inputs - Simple",
     description: [
-      "Add or remove numerical resources with a spinner input (use the arrows or type a number).",
-      "More input types are available for specific games - you can find their description below."
+      "Add or remove numerical resources with a spinner input (use the buttons or type a number).",
+    ]
+  },
+  {
+    title: "Resource Inputs - Simple - Combined",
+    description: [
+      "Like simple inputs: add or remove numerical resources with a spinner input (use the buttons or type a number).",
+      "In the combined input, multiple resources (of similar types) are combined to save space.",
+      "Each resource type can be configured with a name and a color in the game configuration file."
+    ]
+  },
+  {
+    title: "Resource Inputs - Absolute",
+    description: [
+      "Set a numerical resources with a spinner input (use the buttons or type a number) or set to N/A.",
+      "The values of this input type are not summed up, but instead the values will be used directly.",
+      "If a stage has N/A for a resource, the value of the previous stage will be used (unchanged)."
+    ]
+  },
+  {
+    title: "Resource Inputs - One Time - Combined",
+    description: [
+      "Uses a tri-state button to set a value to yes (✓), no (✗) or N/A (-).",
+      "The latest set value will be used directly instead of being summed up (like in absolute inputs).",
+      "If a stage has N/A for a resource, the value of the previous stage will be used (unchanged)."
     ]
   },
   {
